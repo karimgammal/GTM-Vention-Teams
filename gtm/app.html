@@ -11,30 +11,24 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
   <style>
     :root{
-      --charcoal:#1f2937;       /* charcoal */
-      --charcoal-2:#111827;     /* deeper charcoal */
-      --orange:#f97316;         /* vention-ish orange */
-      --line:#e5e7eb;           /* light border */
-      --bg:#f6f7f9;             /* page background */
-      --ink:#0f172a;            /* main text */
-      --muted:#6b7280;          /* secondary text */
-      --card:#ffffff;           /* card bg */
+      --charcoal:#1f2937;
+      --charcoal-2:#111827;
+      --orange:#f97316;
+      --line:#e5e7eb;
+      --bg:#f6f7f9;
+      --ink:#0f172a;
+      --muted:#6b7280;
+      --card:#ffffff;
     }
-    /* Base */
     *{box-sizing:border-box}
     html,body{height:100%}
     body{margin:0;background:var(--bg);color:var(--ink);
-         font-family:Inter,system-ui,Segoe UI,Roboto,Helvetica,Arial,sans-serif;}
+         font-family:Inter,system-ui,Segoe UI,Roboto,Helvetica,Arial,sans-serif}
 
-    /* Header */
-    header.page{
-      background:linear-gradient(180deg,var(--charcoal),var(--charcoal-2));
-      color:#fff;padding:18px 20px
-    }
+    header.page{background:linear-gradient(180deg,var(--charcoal),var(--charcoal-2));color:#fff;padding:18px 20px}
     header.page h1{margin:0;font-weight:800;font-size:24px;line-height:1.2}
     header.page p{margin:6px 0 0 0;opacity:.9}
 
-    /* Layout helpers (tiny Tailwind-ish subset) */
     .container{max-width:1200px;margin:18px auto;padding:0 16px}
     .section{
       background:var(--card);border:1px solid var(--line);border-radius:14px;
@@ -45,7 +39,6 @@
     .grid-3{display:grid;grid-template-columns:1fr;gap:14px}
     @media(min-width:900px){ .grid-3{grid-template-columns:repeat(3,1fr)} }
 
-    /* Inputs */
     label{display:block;font-size:13px;font-weight:600;margin-bottom:6px}
     input[type="number"], input[type="text"], select{
       width:100%;max-width:260px;background:#fff;border:1px solid var(--line);
@@ -53,14 +46,12 @@
     }
     input:focus, select:focus{box-shadow:0 0 0 3px rgba(249,115,22,.15);border-color:#f59e0b}
 
-    /* KPI tiles */
     .kpis{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:10px}
     @media(min-width:1000px){ .kpis{grid-template-columns:repeat(5,1fr)} }
     .kpi{background:#f9fafb;border:1px solid var(--line);border-radius:12px;padding:12px}
     .kpi .label{color:var(--muted);font-size:12px}
     .kpi .value{font-weight:700;font-size:18px;margin-top:4px}
 
-    /* Tables */
     .table-wrap{overflow-x:auto;border:1px solid var(--line);border-radius:12px;background:#fff}
     table{border-collapse:collapse;width:100%;min-width:760px}
     th,td{border-top:1px solid var(--line);padding:10px 8px;font-size:13px;vertical-align:middle}
@@ -72,10 +63,8 @@
     .subhead.em{background:#ecfdf5;border-top:1px solid #d1fae5}
     .subhead.total{background:#f3f4f6;border-top:1px solid #e5e7eb}
 
-    /* Hire grid inputs inside the table */
     .hire-grid input{width:72px;text-align:right}
 
-    /* Pills / helpers */
     .note{color:var(--muted);font-size:12px;margin-top:6px}
     .mode{display:flex;align-items:center;gap:8px}
     .mode label{margin:0}
@@ -102,12 +91,11 @@
   <script type="text/babel">
     const { useMemo, useState } = React;
 
-    /* ============== helpers ============== */
+    /* helpers */
     const clamp = (n, lo, hi) => Math.max(lo, Math.min(hi, n));
     const fmtMoney = (n) => (Number(n)||0).toLocaleString(undefined,{style:"currency",currency:"USD",maximumFractionDigits:0});
     const fmtInt = (n) => Math.round(Number(n)||0).toLocaleString();
 
-    /* Section wrapper (adds ".section" class so our CSS styles it) */
     function Section({ title, children }) {
       return (
         <div className="section">
@@ -117,7 +105,6 @@
       );
     }
 
-    /* ============== Your calculator (logic unchanged) ============== */
     function GTMCalculator() {
       const [mode, setMode] = useState("headcount");
       const [horizon, setHorizon] = useState(12);
@@ -134,7 +121,7 @@
       const [startingAEs, setStartingAEs] = useState(4);
       const [inheritedAttainmentPct, setInheritedAttainmentPct] = useState(50);
 
-      const [hirePlan, setHirePlan] = useState(() => { const arr = new Array(24).fill(0); arr[1]=0; arr[4]=2; arr[8]=2; return arr; });
+      const [hirePlan, setHirePlan] = useState(() => { const arr = new Array(24).fill(0); arr[4]=2; arr[8]=2; return arr; });
 
       const [newHireRampMonths, setNewHireRampMonths] = useState(1);
       const rampForMonthIndex = (idx) => {
@@ -237,57 +224,58 @@
         return {neededAEs: startingAEs+best.hires, planSuggestion, sim:best.sim};
       }, [targetRevenue,startingAEs,horizon,monthlyQuotaFull,attainment,capacityDriver,actualAccountsPerAEMonth,avgDealSize,newHireRampMonths,salesCycleMonths]);
 
-      /* ============== UI ============== */
       return (
-        <div className="page">
-          <Section title={
-            <div className="mode">
-              <span style="font-weight:700">Mode</span>
-              <select value={mode} onChange={(e)=>setMode(e.target.value)}>
-                <option value="headcount">Headcount-driven</option>
-                <option value="revenue">Revenue-driven</option>
-              </select>
-              <span className="pill"><strong>Tip</strong> change mode to see both planning flows</span>
-            </div>
-          }/>
+        <div>
+          <Section
+            title={
+              <div className="mode">
+                <span style={{ fontWeight: 700 }}>Mode</span>
+                <select value={mode} onChange={(e)=>setMode(e.target.value)}>
+                  <option value="headcount">Headcount-driven</option>
+                  <option value="revenue">Revenue-driven</option>
+                </select>
+                <span className="pill"><strong>Tip</strong> change mode to see both flows</span>
+              </div>
+            }
+          />
 
           <Section title="Global Inputs">
             <div className="grid-3">
               <div>
                 <label>Horizon (months)</label>
                 <input type="number" min="6" max="36" value={horizon}
-                       onChange={(e)=>setHorizon(clamp(Number(e.target.value)||0,6,36))}/>
+                  onChange={(e)=>setHorizon(clamp(Number(e.target.value)||0,6,36))}/>
               </div>
               <div>
                 <label>Quota per AE (annual)</label>
                 <input type="number" value={quotaPerAEAnnual}
-                       onChange={(e)=>setQuotaPerAEAnnual(Number(e.target.value)||0)}/>
+                  onChange={(e)=>setQuotaPerAEAnnual(Number(e.target.value)||0)}/>
               </div>
               <div>
                 <label>Quota Attainment (%)</label>
                 <input type="number" min="0" max="150" value={attainmentPct}
-                       onChange={(e)=>setAttainmentPct(clamp(Number(e.target.value)||0,0,150))}/>
+                  onChange={(e)=>setAttainmentPct(clamp(Number(e.target.value)||0,0,150))}/>
               </div>
               <div>
                 <label>Avg Deal Size</label>
                 <input type="number" value={avgDealSize}
-                       onChange={(e)=>setAvgDealSize(Number(e.target.value)||0)}/>
+                  onChange={(e)=>setAvgDealSize(Number(e.target.value)||0)}/>
               </div>
               <div>
                 <label>Sales Cycle (months)</label>
                 <input type="number" min="1" max="12" value={salesCycleMonths}
-                       onChange={(e)=>setSalesCycleMonths(clamp(Number(e.target.value)||0,1,12))}/>
+                  onChange={(e)=>setSalesCycleMonths(clamp(Number(e.target.value)||0,1,12))}/>
                 <div className="note">Impacts both Headcount and Revenue-driven forecasts.</div>
               </div>
               <div>
                 <label>Inherited Team Productivity (%)</label>
                 <input type="number" min="0" max="150" value={inheritedAttainmentPct}
-                       onChange={(e)=>setInheritedAttainmentPct(clamp(Number(e.target.value)||0,0,150))}/>
+                  onChange={(e)=>setInheritedAttainmentPct(clamp(Number(e.target.value)||0,0,150))}/>
                 <div className="note">Recognized immediately each month (no lag).</div>
               </div>
             </div>
 
-            <div className="grid-3" style="margin-top:12px">
+            <div className="grid-3" style={{ marginTop: 12 }}>
               <div>
                 <label>Capacity Driver</label>
                 <select value={capacityDriver} onChange={(e)=>setCapacityDriver(e.target.value)}>
@@ -298,7 +286,7 @@
               <div>
                 <label>Actual Accounts / AE / month</label>
                 <input type="number" min="0" value={actualAccountsPerAEMonth}
-                       onChange={(e)=>setActualAccountsPerAEMonth(Math.max(0,Number(e.target.value)||0))}/>
+                  onChange={(e)=>setActualAccountsPerAEMonth(Math.max(0,Number(e.target.value)||0))}/>
                 <div className="note">Used in revenue-driven mode.</div>
               </div>
             </div>
@@ -311,23 +299,25 @@
                   <div>
                     <label>Starting AEs (inherited)</label>
                     <input type="number" min="0" value={startingAEs}
-                           onChange={(e)=>setStartingAEs(Math.max(0,Number(e.target.value)||0))}/>
+                      onChange={(e)=>setStartingAEs(Math.max(0,Number(e.target.value)||0))}/>
                   </div>
-                  <div style="grid-column:1 / -1">
+                  <div style={{ gridColumn: "1 / -1" }}>
                     <label>Monthly Hires (editable grid)</label>
                     <div className="table-wrap">
                       <table className="hire-grid">
                         <thead>
                           <tr>
-                            {months.map((m)=><th key={m} style={{textAlign:"center"}}>{m}</th>)}
+                            {months.map((m)=><th key={m} style={{ textAlign:"center" }}>{m}</th>)}
                           </tr>
                         </thead>
                         <tbody>
                           <tr>
                             {months.map((m,i)=>(
-                              <td key={m} style={{textAlign:"center"}}>
-                                <input type="number" min="0" value={normalizedHirePlan[i]}
-                                       onChange={(e)=>{const next=[...normalizedHirePlan]; next[i]=Math.max(0,Number(e.target.value)||0); setHirePlan(next);}} />
+                              <td key={m} style={{ textAlign:"center" }}>
+                                <input
+                                  type="number" min="0" value={normalizedHirePlan[i]}
+                                  onChange={(e)=>{const next=[...normalizedHirePlan]; next[i]=Math.max(0,Number(e.target.value)||0); setHirePlan(next);}}
+                                />
                               </td>
                             ))}
                           </tr>
@@ -353,31 +343,31 @@
                     <thead>
                       <tr>
                         <th>Month</th>
-                        {months.map((m)=><th key={m} style={{textAlign:"right"}}>{m}</th>)}
+                        {months.map((m)=><th key={m} style={{ textAlign:"right" }}>{m}</th>)}
                       </tr>
                     </thead>
                     <tbody>
                       <tr>
                         <td>AEs (end of month)</td>
-                        {headcountSim.totalAEsByMonth.map((v,i)=><td key={i} style={{textAlign:"right"}}>{fmtInt(v)}</td>)}
+                        {headcountSim.totalAEsByMonth.map((v,i)=><td key={i} style={{ textAlign:"right" }}>{fmtInt(v)}</td>)}
                       </tr>
 
                       <tr><td className="subhead" colSpan={months.length+1}>Inherited Team</td></tr>
                       <tr>
                         <td>Revenue — Inherited (recognized)</td>
-                        {headcountSim.monthlyRevenueStart.map((v,i)=><td key={i} style={{textAlign:"right"}}>{fmtMoney(v)}</td>)}
+                        {headcountSim.monthlyRevenueStart.map((v,i)=><td key={i} style={{ textAlign:"right" }}>{fmtMoney(v)}</td>)}
                       </tr>
 
                       <tr><td className="subhead em" colSpan={months.length+1}>New Hires</td></tr>
                       <tr>
                         <td>Revenue — New Hires (recognized)</td>
-                        {headcountSim.monthlyRevenueHires.map((v,i)=><td key={i} style={{textAlign:"right"}}>{fmtMoney(v)}</td>)}
+                        {headcountSim.monthlyRevenueHires.map((v,i)=><td key={i} style={{ textAlign:"right" }}>{fmtMoney(v)}</td>)}
                       </tr>
 
                       <tr><td className="subhead total" colSpan={months.length+1}>Totals</td></tr>
                       <tr>
                         <td>Revenue — Total (recognized)</td>
-                        {headcountSim.monthlyRevenue.map((v,i)=><td key={i} style={{textAlign:"right"}}>{fmtMoney(v)}</td>)}
+                        {headcountSim.monthlyRevenue.map((v,i)=><td key={i} style={{ textAlign:"right" }}>{fmtMoney(v)}</td>)}
                       </tr>
                     </tbody>
                   </table>
@@ -393,12 +383,12 @@
                   <div>
                     <label>Starting AEs (inherited)</label>
                     <input type="number" min="0" value={startingAEs}
-                           onChange={(e)=>setStartingAEs(Math.max(0,Number(e.target.value)||0))}/>
+                      onChange={(e)=>setStartingAEs(Math.max(0,Number(e.target.value)||0))}/>
                   </div>
                   <div>
                     <label>Target Revenue (over horizon)</label>
                     <input type="number" min="0" value={targetRevenue}
-                           onChange={(e)=>setTargetRevenue(Math.max(0,Number(e.target.value)||0))}/>
+                      onChange={(e)=>setTargetRevenue(Math.max(0,Number(e.target.value)||0))}/>
                   </div>
                   <div>
                     <label>Capacity Driver</label>
@@ -410,7 +400,7 @@
                   <div>
                     <label>Sales Cycle (months)</label>
                     <input type="number" min="1" max="12" value={salesCycleMonths}
-                           onChange={(e)=>setSalesCycleMonths(clamp(Number(e.target.value)||0,1,12))}/>
+                      onChange={(e)=>setSalesCycleMonths(clamp(Number(e.target.value)||0,1,12))}/>
                   </div>
                   <div>
                     <label>New Hire Ramp Length (months)</label>
@@ -436,22 +426,22 @@
                     <thead>
                       <tr>
                         <th>Month</th>
-                        {months.map((m)=><th key={m} style={{textAlign:"right"}}>{m}</th>)}
+                        {months.map((m)=><th key={m} style={{ textAlign:"right" }}>{m}</th>)}
                       </tr>
                     </thead>
                     <tbody>
                       <tr><td className="subhead" colSpan={months.length+1}>Breakout: Inherited vs New Hires</td></tr>
                       <tr>
                         <td>Revenue — Inherited (recognized)</td>
-                        {revenueDrivenPlan.sim.monthlyRevenueStart.map((v,i)=><td key={i} style={{textAlign:"right"}}>{fmtMoney(v)}</td>)}
+                        {revenueDrivenPlan.sim.monthlyRevenueStart.map((v,i)=><td key={i} style={{ textAlign:"right" }}>{fmtMoney(v)}</td>)}
                       </tr>
                       <tr>
                         <td>Revenue — New Hires (recognized)</td>
-                        {revenueDrivenPlan.sim.monthlyRevenueHires.map((v,i)=><td key={i} style={{textAlign:"right"}}>{fmtMoney(v)}</td>)}
+                        {revenueDrivenPlan.sim.monthlyRevenueHires.map((v,i)=><td key={i} style={{ textAlign:"right" }}>{fmtMoney(v)}</td>)}
                       </tr>
                       <tr>
                         <td>Revenue — Total (recognized)</td>
-                        {revenueDrivenPlan.sim.monthlyRevenue.map((v,i)=><td key={i} style={{textAlign:"right"}}>{fmtMoney(v)}</td>)}
+                        {revenueDrivenPlan.sim.monthlyRevenue.map((v,i)=><td key={i} style={{ textAlign:"right" }}>{fmtMoney(v)}</td>)}
                       </tr>
                     </tbody>
                   </table>
@@ -463,7 +453,6 @@
       );
     }
 
-    /* Mount */
     const root = ReactDOM.createRoot(document.getElementById('root'));
     root.render(<GTMCalculator />);
   </script>
