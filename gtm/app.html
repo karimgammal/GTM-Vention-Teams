@@ -1,0 +1,397 @@
+import React, { useMemo, useState } from "react";
+
+/**
+ * GTM Revenue & Activity Calculator — FULL UI (Accounts terminology)
+ *
+ * Updates per request:
+ *  - Removed "Accounts needed/AE/month" info card (Global Inputs) and summary tile (Headcount Forecast)
+ *  - Headcount forecast now respects dynamic Sales Cycle: recognition begins at (ramp + salesCycle) months since hire
+ *    and spreads the AE's attained annual quota evenly across the remaining months in their first 12 months post-hire
+ *  - Removed "Accounts – New Hires" row
+ *  - Removed "Quota Allocation – Total" row
+ */
+
+// ---------- helpers ----------
+function clamp(n, lo, hi) { return Math.max(lo, Math.min(hi, n)); }
+function fmtMoney(n) { n = Number(n) || 0; return n.toLocaleString(undefined, { style: "currency", currency: "USD", maximumFractionDigits: 0 }); }
+function fmtInt(n) { return Math.round(Number(n) || 0).toLocaleString(); }
+
+function Section({ title, children }) {
+  return (
+    <div className="rounded-2xl border border-gray-200 p-4 md:p-6 shadow-sm bg-white">
+      <h2 className="text-lg md:text-xl font-semibold mb-3">{title}</h2>
+      {children}
+    </div>
+  );
+}
+
+export default function GTMCalculator() {
+  // ----- global state -----
+  const [mode, setMode] = useState("headcount"); // "headcount" | "revenue"
+  const [horizon, setHorizon] = useState(24); // months
+
+  // Core inputs
+  const [quotaPerAEAnnual, setQuotaPerAEAnnual] = useState(1_000_000);
+  const [attainmentPct, setAttainmentPct] = useState(85);
+  const [avgDealSize, setAvgDealSize] = useState(200_000);
+  const [conversionPct, setConversionPct] = useState(1); // account->won % (kept for reference)
+  const [salesCycleMonths, setSalesCycleMonths] = useState(5); // dynamic now affects headcount forecast
+
+  // Capacity driver (kept for revenue-driven generic calc)
+  const [capacityDriver, setCapacityDriver] = useState("quota"); // "quota" | "accounts"
+  const [actualAccountsPerAEMonth, setActualAccountsPerAEMonth] = useState(42);
+
+  // Inherited team
+  const [startingAEs, setStartingAEs] = useState(4);
+  const [inheritedAttainmentPct, setInheritedAttainmentPct] = useState(50); // recognized immediately each month
+
+  // Hiring plan (per month)
+  const [hirePlan, setHirePlan] = useState(() => { const arr = new Array(24).fill(0); arr[4] = 2; arr[8] = 2; return arr; });
+
+  // New-hire ramp setting (used for recognition start and generic calc)
+  const [newHireRampMonths, setNewHireRampMonths] = useState(1); // 1 | 2 | 3
+  const rampForMonthIndex = (idx) => {
+    if (newHireRampMonths === 1) return idx === 1 ? 0.5 : 1;
+    if (newHireRampMonths === 2) return idx === 1 ? 0.5 : (idx === 2 ? 0.75 : 1);
+    return idx === 1 ? 0.33 : (idx === 2 ? 0.66 : 1);
+  };
+
+  // Revenue-driven target
+  const [targetRevenue, setTargetRevenue] = useState(8_000_000);
+
+  // ----- derived -----
+  const monthlyQuotaFull = quotaPerAEAnnual / 12;
+  const attainment = clamp(attainmentPct / 100, 0, 2);
+  const inheritedPct = clamp(inheritedAttainmentPct / 100, 0, 2);
+
+  const months = useMemo(() => Array.from({ length: horizon }, (_, i) => `M${i + 1}`), [horizon]);
+
+  const normalizedHirePlan = useMemo(() => {
+    const arr = new Array(horizon).fill(0);
+    for (let i = 0; i < Math.min(hirePlan.length, horizon); i++) arr[i] = hirePlan[i] || 0;
+    return arr;
+  }, [hirePlan, horizon]);
+
+  // ---------- simulators ----------
+  // recognitionStyle: "headcount" (concentrated post ramp+lag) | "generic" (ramp + lag monthly)
+  function simulate(hiresByMonth, recognitionStyle) {
+    const monthlyRevenue = new Array(horizon).fill(0);
+    const monthlyRevenueStart = new Array(horizon).fill(0);
+    const monthlyRevenueHires = new Array(horizon).fill(0);
+
+    const totalAEsByMonth = new Array(horizon).fill(0);
+
+    // Inherited stream: recognized immediately every month, no lag
+    for (let m = 0; m < horizon; m++) {
+      totalAEsByMonth[m] = startingAEs + hiresByMonth.slice(0, m + 1).reduce((a, b) => a + b, 0);
+      monthlyRevenueStart[m] = startingAEs * monthlyQuotaFull * inheritedPct;
+    }
+
+    if (recognitionStyle === "headcount") {
+      // Headcount mode: recognition starts after (ramp + salesCycle) months since hire
+      // Spread each new hire's attained annual quota evenly across the remaining months in their first 12 months
+      // Example: ramp=1, sales=4 -> start = month 5 since hire; months recognized = 12 - (1+4) = 7 months
+      const startOffset = newHireRampMonths + salesCycleMonths; // months since hire when recognition begins
+      const monthsRecognized = Math.max(1, 12 - startOffset);
+      const perAEPerMonth = (quotaPerAEAnnual * attainment) / monthsRecognized;
+
+      for (let h = 0; h < horizon; h++) {
+        const hired = hiresByMonth[h] || 0; if (!hired) continue;
+        const startIdx = h + startOffset - 1; // zero-based index for the start month in the timeline
+        const endIdx = Math.min(h + 11, horizon - 1); // end of first 12 months post-hire
+        for (let m = startIdx; m <= endIdx; m++) {
+          if (m >= 0 && m < horizon) monthlyRevenueHires[m] += hired * perAEPerMonth;
+        }
+      }
+    } else {
+      // Revenue-driven generic: ramp monthly capacity then apply sales-cycle lag
+      const monthlyCapacityHires = new Array(horizon).fill(0);
+      for (let m = 0; m < horizon; m++) {
+        let cap = 0;
+        for (let h = 0; h <= m; h++) {
+          const hired = hiresByMonth[h] || 0; if (!hired) continue;
+          const idx = m - h + 1; const ramp = rampForMonthIndex(idx);
+          if (capacityDriver === "quota") cap += hired * monthlyQuotaFull * attainment * ramp;
+          else {
+            // accounts-driven path (kept for completeness)
+            const conv = 0.01; // placeholder; not shown in UI now
+            const avgDeal = avgDealSize;
+            const acts = actualAccountsPerAEMonth * ramp;
+            cap += hired * acts * avgDeal * conv;
+          }
+        }
+        monthlyCapacityHires[m] = cap;
+      }
+      for (let m = 0; m < horizon; m++) {
+        const lagIdx = m - salesCycleMonths;
+        monthlyRevenueHires[m] = lagIdx >= 0 ? monthlyCapacityHires[lagIdx] : 0;
+      }
+    }
+
+    for (let m = 0; m < horizon; m++) {
+      monthlyRevenue[m] = monthlyRevenueStart[m] + monthlyRevenueHires[m];
+    }
+
+    const totals = {
+      totalRevenue: monthlyRevenue.reduce((a, b) => a + b, 0),
+      totalRevenueStart: monthlyRevenueStart.reduce((a, b) => a + b, 0),
+      totalRevenueHires: monthlyRevenueHires.reduce((a, b) => a + b, 0),
+      finalAECount: totalAEsByMonth[horizon - 1] || startingAEs,
+    };
+
+    return { monthlyRevenue, monthlyRevenueStart, monthlyRevenueHires, totalAEsByMonth, totals };
+  }
+
+  const headcountSim = useMemo(
+    () => simulate(normalizedHirePlan, "headcount"),
+    [normalizedHirePlan, horizon, startingAEs, monthlyQuotaFull, inheritedPct, quotaPerAEAnnual, attainment, newHireRampMonths, salesCycleMonths]
+  );
+
+  const revenueDrivenPlan = useMemo(() => {
+    // Binary search hires in M1 to hit target total revenue (generic calc)
+    const maxHires = 2000; let lo = 0, hi = maxHires;
+    let best = { hires: 0, sim: simulate(new Array(horizon).fill(0), "generic") };
+    while (lo <= hi) {
+      const mid = Math.floor((lo + hi) / 2);
+      const plan = new Array(horizon).fill(0); plan[0] = mid;
+      const sim = simulate(plan, "generic");
+      best = { hires: mid, sim };
+      const total = sim.totals.totalRevenue;
+      if (Math.abs(total - targetRevenue) <= Math.max(1, targetRevenue * 0.01)) break;
+      if (total < targetRevenue) lo = mid + 1; else hi = mid - 1;
+    }
+    const planSuggestion = new Array(horizon).fill(0); planSuggestion[0] = best.hires;
+    return { neededAEs: startingAEs + best.hires, planSuggestion, sim: best.sim };
+  }, [targetRevenue, startingAEs, horizon, monthlyQuotaFull, attainment, capacityDriver, actualAccountsPerAEMonth, avgDealSize, newHireRampMonths, salesCycleMonths]);
+
+  // ---------- UI ----------
+  return (
+    <div className="w-full mx-auto max-w-7xl p-4 md:p-8 space-y-6 text-gray-900">
+      <header className="flex flex-col md:flex-row md:items-end md:justify-between gap-4">
+        <div>
+          <h1 className="text-2xl md:text-3xl font-bold">GTM Revenue & Activity Calculator</h1>
+          <p className="text-sm md:text-base text-gray-600">Fintech & Healthcare • AE full-cycle • Ramp + sales cycle • Bilateral planning</p>
+        </div>
+        <div className="flex items-center gap-3">
+          <label className="text-sm font-medium">Mode</label>
+          <select className="border rounded-xl px-3 py-2" value={mode} onChange={(e) => setMode(e.target.value)}>
+            <option value="headcount">Headcount-driven</option>
+            <option value="revenue">Revenue-driven</option>
+          </select>
+        </div>
+      </header>
+
+      <Section title="Global Inputs">
+        <div className="grid md:grid-cols-3 gap-4">
+          <div>
+            <label className="block text-sm font-medium">Horizon (months)</label>
+            <input type="number" min={6} max={36} value={horizon} onChange={(e) => setHorizon(clamp(Number(e.target.value)||0,6,36))} className="w-full border rounded-xl px-3 py-2" />
+          </div>
+          <div>
+            <label className="block text-sm font-medium">Quota per AE (annual)</label>
+            <input type="number" value={quotaPerAEAnnual} onChange={(e) => setQuotaPerAEAnnual(Number(e.target.value)||0)} className="w-full border rounded-xl px-3 py-2" />
+          </div>
+          <div>
+            <label className="block text-sm font-medium">Quota Attainment (%)</label>
+            <input type="number" min={0} max={150} value={attainmentPct} onChange={(e) => setAttainmentPct(clamp(Number(e.target.value)||0,0,150))} className="w-full border rounded-xl px-3 py-2" />
+          </div>
+          <div>
+            <label className="block text-sm font-medium">Avg Deal Size</label>
+            <input type="number" value={avgDealSize} onChange={(e) => setAvgDealSize(Number(e.target.value)||0)} className="w-full border rounded-xl px-3 py-2" />
+          </div>
+          <div>
+            <label className="block text-sm font-medium">Sales Cycle (months)</label>
+            <input type="number" min={1} max={12} value={salesCycleMonths} onChange={(e) => setSalesCycleMonths(clamp(Number(e.target.value)||0,1,12))} className="w-full border rounded-xl px-3 py-2" />
+            <p className="text-xs text-gray-500 mt-1">Impacts both Headcount and Revenue-driven forecasts.</p>
+          </div>
+          <div>
+            <label className="block text-sm font-medium">Inherited Team Productivity (%)</label>
+            <input type="number" min={0} max={150} value={inheritedAttainmentPct} onChange={(e) => setInheritedAttainmentPct(clamp(Number(e.target.value)||0,0,150))} className="w-full border rounded-xl px-3 py-2" />
+            <p className="text-xs text-gray-500 mt-1">Recognized immediately each month (no lag).</p>
+          </div>
+        </div>
+
+        <div className="md:col-span-3 grid grid-cols-1 md:grid-cols-3 gap-4 bg-gray-50 rounded-xl p-3 mt-3">
+          <div>
+            <label className="block text-sm font-medium">Capacity Driver</label>
+            <select className="w-full border rounded-xl px-3 py-2" value={capacityDriver} onChange={(e) => setCapacityDriver(e.target.value)}>
+              <option value="quota">Quota-driven (top-down)</option>
+              <option value="accounts">Accounts-driven (bottom-up)</option>
+            </select>
+          </div>
+          <div>
+            <label className="block text-sm font-medium">Actual Accounts / AE / month</label>
+            <input type="number" min={0} value={actualAccountsPerAEMonth} onChange={(e) => setActualAccountsPerAEMonth(Math.max(0, Number(e.target.value)||0))} className="w-full border rounded-xl px-3 py-2" />
+            <p className="text-xs text-gray-500 mt-1">For accounts-driven planning (used in revenue-driven mode).</p>
+          </div>
+        </div>
+
+      </Section>
+
+      {mode === "headcount" && (
+        <>
+          <Section title="Headcount-Driven Inputs">
+            <div className="grid md:grid-cols-3 gap-4">
+              <div>
+                <label className="block text-sm font-medium">Starting AEs (inherited)</label>
+                <input type="number" min={0} value={startingAEs} onChange={(e) => setStartingAEs(Math.max(0, Number(e.target.value)||0))} className="w-full border rounded-xl px-3 py-2" />
+              </div>
+              <div className="md:col-span-2">
+                <label className="block text-sm font-medium">Monthly Hires (editable grid)</label>
+                <div className="overflow-x-auto">
+                  <table className="min-w-full text-xs">
+                    <thead>
+                      <tr className="text-left border-b">
+                        {months.map((m) => (<th key={m} className="py-2 px-2 text-center font-medium">{m}</th>))}
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        {months.map((m, i) => (
+                          <td key={m} className="py-2 px-2">
+                            <input type="number" min={0} value={normalizedHirePlan[i]}
+                              onChange={(e)=>{ const next=[...normalizedHirePlan]; next[i]=Math.max(0, Number(e.target.value)||0); setHirePlan(next); }}
+                              className="w-20 border rounded-lg px-2 py-1 text-right" />
+                          </td>
+                        ))}
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+                <p className="text-xs text-gray-500 mt-1">Values are hires added in that month.</p>
+              </div>
+            </div>
+          </Section>
+
+          <Section title="Headcount Forecast (recognition starts after Ramp + Sales Cycle)">
+            <div className="grid grid-cols-2 md:grid-cols-5 gap-3 mb-4">
+              <div className="bg-gray-50 rounded-xl p-3 text-sm"><div className="text-gray-500">Final AE Count</div><div className="text-lg font-semibold">{fmtInt(headcountSim.totals.finalAECount)}</div></div>
+              <div className="bg-gray-50 rounded-xl p-3 text-sm"><div className="text-gray-500">Revenue - Inherited</div><div className="text-lg font-semibold">{fmtMoney(headcountSim.totals.totalRevenueStart)}</div></div>
+              <div className="bg-gray-50 rounded-xl p-3 text-sm"><div className="text-gray-500">Revenue - New Hires</div><div className="text-lg font-semibold">{fmtMoney(headcountSim.totals.totalRevenueHires)}</div></div>
+              <div className="bg-gray-50 rounded-xl p-3 text-sm"><div className="text-gray-500">Revenue - Total</div><div className="text-lg font-semibold">{fmtMoney(headcountSim.totals.totalRevenue)}</div></div>
+              <div className="bg-gray-50 rounded-xl p-3 text-sm"><div className="text-gray-500">Start Offset</div><div className="text-lg font-semibold">{newHireRampMonths + salesCycleMonths} mo</div></div>
+            </div>
+
+            <div className="overflow-x-auto">
+              <table className="min-w-full text-sm">
+                <thead>
+                  <tr className="text-left border-b">
+                    <th className="py-2 pr-4">Month</th>
+                    {months.map((m) => (<th key={m} className="py-2 px-2 text-right">{m}</th>))}
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr className="border-b bg-gray-50">
+                    <td className="py-2 pr-4 font-medium">AEs (end of month)</td>
+                    {headcountSim.totalAEsByMonth.map((v, i) => (<td key={i} className="py-2 px-2 text-right">{fmtInt(v)}</td>))}
+                  </tr>
+
+                  <tr>
+                    <td colSpan={months.length + 1} className="py-2 px-2 text-xs uppercase tracking-wide text-gray-600 bg-indigo-50 border-t border-indigo-100">Inherited Team</td>
+                  </tr>
+                  <tr className="border-b">
+                    <td className="py-2 pr-4 font-medium">Revenue - Inherited (recognized)</td>
+                    {headcountSim.monthlyRevenueStart.map((v, i) => (<td key={i} className="py-2 px-2 text-right">{fmtMoney(v)}</td>))}
+                  </tr>
+
+                  <tr>
+                    <td colSpan={months.length + 1} className="py-2 px-2 text-xs uppercase tracking-wide text-gray-600 bg-emerald-50 border-t border-emerald-100">New Hires</td>
+                  </tr>
+                  <tr className="border-b">
+                    <td className="py-2 pr-4 font-medium">Revenue - New Hires (recognized)</td>
+                    {headcountSim.monthlyRevenueHires.map((v, i) => (<td key={i} className="py-2 px-2 text-right">{fmtMoney(v)}</td>))}
+                  </tr>
+
+                  <tr>
+                    <td colSpan={months.length + 1} className="py-2 px-2 text-xs uppercase tracking-wide text-gray-600 bg-gray-100 border-t">Totals</td>
+                  </tr>
+                  <tr>
+                    <td className="py-2 pr-4 font-medium">Revenue - Total (recognized)</td>
+                    {headcountSim.monthlyRevenue.map((v, i) => (<td key={i} className="py-2 px-2 text-right">{fmtMoney(v)}</td>))}
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </Section>
+        </>
+      )}
+
+      {mode === "revenue" && (
+        <>
+          <Section title="Revenue-Driven Inputs">
+            <div className="grid md:grid-cols-3 gap-4">
+              <div>
+                <label className="block text-sm font-medium">Starting AEs (inherited)</label>
+                <input type="number" min={0} value={startingAEs} onChange={(e)=>setStartingAEs(Math.max(0, Number(e.target.value)||0))} className="w-full border rounded-xl px-3 py-2" />
+              </div>
+              <div>
+                <label className="block text-sm font-medium">Target Revenue (over horizon)</label>
+                <input type="number" min={0} value={targetRevenue} onChange={(e)=>setTargetRevenue(Math.max(0, Number(e.target.value)||0))} className="w-full border rounded-xl px-3 py-2" />
+              </div>
+              <div>
+                <label className="block text-sm font-medium">Capacity Driver</label>
+                <select className="w-full border rounded-xl px-3 py-2" value={capacityDriver} onChange={(e)=>setCapacityDriver(e.target.value)}>
+                  <option value="quota">Quota-driven</option>
+                  <option value="accounts">Accounts-driven</option>
+                </select>
+              </div>
+              <div>
+                <label className="block text-sm font-medium">Sales Cycle (months)</label>
+                <input type="number" min={1} max={12} value={salesCycleMonths} onChange={(e) => setSalesCycleMonths(clamp(Number(e.target.value)||0,1,12))} className="w-full border rounded-xl px-3 py-2" />
+              </div>
+              <div>
+                <label className="block text-sm font-medium">New Hire Ramp Length (months)</label>
+                <select className="w-full border rounded-xl px-3 py-2" value={newHireRampMonths} onChange={(e) => setNewHireRampMonths(Number(e.target.value))}>
+                  <option value={1}>1 month (50% then 100%)</option>
+                  <option value={2}>2 months (50% -&gt; 75% -&gt; 100%)</option>
+                  <option value={3}>3 months (33% -&gt; 66% -&gt; 100%)</option>
+                </select>
+              </div>
+            </div>
+          </Section>
+
+          <Section title="Suggested Plan & Forecast">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-4">
+              <div className="bg-gray-50 rounded-xl p-3 text-sm"><div className="text-gray-500">Estimated AEs Needed</div><div className="text-lg font-semibold">{fmtInt(revenueDrivenPlan.neededAEs)}</div></div>
+              <div className="bg-gray-50 rounded-xl p-3 text-sm"><div className="text-gray-500">Suggested Hires (M1)</div><div className="text-lg font-semibold">{fmtInt(revenueDrivenPlan.planSuggestion[0])}</div></div>
+              <div className="bg-gray-50 rounded-xl p-3 text-sm"><div className="text-gray-500">Forecast Revenue (recognized)</div><div className="text-lg font-semibold">{fmtMoney(revenueDrivenPlan.sim.totals.totalRevenue)}</div></div>
+              <div className="bg-gray-50 rounded-xl p-3 text-sm"><div className="text-gray-500">Start Offset</div><div className="text-lg font-semibold">{newHireRampMonths + salesCycleMonths} mo</div></div>
+            </div>
+
+            <div className="overflow-x-auto">
+              <table className="min-w-full text-sm">
+                <thead>
+                  <tr className="text-left border-b">
+                    <th className="py-2 pr-4">Month</th>
+                    {months.map((m) => (<th key={m} className="py-2 px-2 text-right">{m}</th>))}
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td colSpan={months.length + 1} className="py-2 px-2 text-xs uppercase tracking-wide text-gray-600 bg-indigo-50 border-t border-indigo-100">Breakout: Inherited vs New Hires</td>
+                  </tr>
+                  <tr className="border-b">
+                    <td className="py-2 pr-4 font-medium">Revenue - Inherited (recognized)</td>
+                    {revenueDrivenPlan.sim.monthlyRevenueStart.map((v, i) => (<td key={i} className="py-2 px-2 text-right">{fmtMoney(v)}</td>))}
+                  </tr>
+                  <tr className="border-b">
+                    <td className="py-2 pr-4 font-medium">Revenue - New Hires (recognized)</td>
+                    {revenueDrivenPlan.sim.monthlyRevenueHires.map((v, i) => (<td key={i} className="py-2 px-2 text-right">{fmtMoney(v)}</td>))}
+                  </tr>
+                  <tr>
+                    <td className="py-2 pr-4 font-medium">Revenue - Total (recognized)</td>
+                    {revenueDrivenPlan.sim.monthlyRevenue.map((v, i) => (<td key={i} className="py-2 px-2 text-right">{fmtMoney(v)}</td>))}
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </Section>
+        </>
+      )}
+
+      <footer className="text-xs text-gray-500 pt-2">
+        <p>Headcount forecast: recognition starts after Ramp + Sales Cycle; Revenue-driven: ramp + lag planner.</p>
+      </footer>
+    </div>
+  );
+}
