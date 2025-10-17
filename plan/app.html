@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>30–60–90–180 Plan</title>
+
+  <!-- Brand-ish styling (charcoal + orange), no build step -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --charcoal:#1f2937;      /* near charcoal */
+      --charcoal-2:#0f172a;    /* deeper slate */
+      --ink:#0b1220;           /* body text */
+      --muted:#6b7280;         /* secondary text */
+      --line:#e5e7eb;          /* subtle borders */
+      --bg:#f6f7f9;            /* page bg */
+      --card:#ffffff;          /* cards */
+      --brand:#f97316;         /* orange accent */
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;background:var(--bg);color:var(--ink);
+      font-family:Inter,system-ui,Segoe UI,Roboto,Helvetica,Arial,sans-serif;
+      line-height:1.6;
+    }
+
+    /* Header */
+    header.page{
+      background:linear-gradient(180deg,var(--charcoal),var(--charcoal-2));
+      color:#fff;padding:18px 20px;
+    }
+    header.page .container{max-width:1200px;margin:0 auto}
+    header.page h1{margin:0;font-weight:800;font-size:26px}
+    header.page p{margin:6px 0 0;opacity:.9}
+
+    /* Layout */
+    .container{max-width:1200px;margin:18px auto;padding:0 16px}
+    .shell{
+      display:grid;grid-template-columns:280px minmax(0,1fr);gap:18px;
+    }
+    @media(max-width:1024px){ .shell{grid-template-columns:1fr} }
+
+    /* Sidebar TOC */
+    .toc{
+      position:sticky;top:16px;align-self:start;
+      background:var(--card);border:1px solid var(--line);border-radius:14px;
+      padding:12px 14px;
+    }
+    .toc h3{margin:4px 0 8px;font-size:13px;text-transform:uppercase;letter-spacing:.06em;color:#334155}
+    .toc a{
+      display:block;color:var(--ink);text-decoration:none;font-size:14px;padding:8px 10px;border-radius:10px;
+    }
+    .toc a:hover{background:#f9fafb}
+    .toc .muted{color:var(--muted);font-size:12px;margin:6px 10px 0}
+
+    /* Plan content card */
+    .card{
+      background:var(--card);border:1px solid var(--line);border-radius:14px;
+      padding:18px 20px;box-shadow:0 1px 2px rgba(0,0,0,.03);
+    }
+    .badge{
+      display:inline-flex;align-items:center;gap:8px;
+      background:#fff;border:1px solid var(--line);padding:6px 10px;border-radius:999px;
+      font-size:12px;margin-right:8px
+    }
+    .badge strong{color:var(--brand)}
+    .pill{
+      display:inline-block;padding:4px 10px;border-radius:999px;background:#fff7ed;border:1px solid #fed7aa;
+      color:#9a3412;font-size:12px
+    }
+
+    /* Typography */
+    article h2{
+      margin:18px 0 6px;font-weight:800;font-size:22px;line-height:1.25;
+      scroll-margin-top:80px;
+    }
+    article h3{margin:16px 0 6px;font-weight:700;font-size:16px}
+    article p{margin:10px 0}
+    article ul{margin:10px 0 10px 20px}
+    article li{margin:6px 0}
+    .subtle{color:var(--muted);font-size:12px}
+
+    /* Section dividers for readability */
+    .div{height:1px;background:var(--line);margin:16px 0}
+  </style>
+</head>
+<body>
+
+  <!-- Top header -->
+  <header class="page">
+    <div class="container">
+      <h1>30–60–90–180 GTM Execution Plan</h1>
+      <p>Fintech &amp; Healthcare · AE full-cycle · $200K avg deal · Ramp + Sales Cycle</p>
+    </div>
+  </header>
+
+  <!-- Main -->
+  <div class="container shell">
+    <!-- Sticky TOC -->
+    <nav class="toc">
+      <h3>Plan Outline</h3>
+      <a href="#exec-summary">Executive Summary</a>
+      <a href="#d30">First 30 Days</a>
+      <a href="#d60">Days 31–60</a>
+      <a href="#d90">Days 61–90</a>
+      <a href="#d180">Days 91–180</a>
+      <div class="muted">Paste your exact content on the right — this page won’t alter it.</div>
+    </nav>
+
+    <!-- Content -->
+    <div class="card">
+      <!-- You paste your content between the START/END markers below. 
+           Keep your original headings, bullets, and wording exactly as-is. -->
+
+      <!-- ===== START: YOUR PLAN CONTENT (paste verbatim) ===== -->
+      <article id="plan">
+
+        <!-- Example header block (you can delete this block if your content already has a header) -->
+        <div class="subtle" style="margin-bottom:8px">
+          <span class="badge"><strong>Focus</strong> Fintech &amp; Healthcare</span>
+          <span class="badge"><strong>Team</strong> AEs full-cycle</span>
+          <span class="badge"><strong>Motion</strong> Outbound + ABM</span>
+          <span class="pill">This header is optional – safe to remove</span>
+        </div>
+
+        <!-- Replace everything from here down with your own plan text if you like.
+             The anchors (#exec-summary, #d30, #d60, #d90, #d180) ensure the left TOC works. -->
+
+        <h2 id="exec-summary">Executive Summary</h2>
+        <p><em>Paste your Executive Summary here exactly as authored (no changes made).</em></p>
+
+        <div class="div"></div>
+
+        <h2 id="d30">First 30 Days</h2>
+        <h3>Priorities</h3>
+        <ul>
+          <li><em>Paste your exact 30-day priorities…</em></li>
+        </ul>
+        <h3>Outcomes</h3>
+        <ul>
+          <li><em>Paste your exact 30-day outcomes…</em></li>
+        </ul>
+
+        <div class="div"></div>
+
+        <h2 id="d60">Days 31–60</h2>
+        <h3>Priorities</h3>
+        <ul>
+          <li><em>Paste your exact 31–60 day priorities…</em></li>
+        </ul>
+        <h3>Outcomes</h3>
+        <ul>
+          <li><em>Paste your exact 31–60 day outcomes…</em></li>
+        </ul>
+
+        <div class="div"></div>
+
+        <h2 id="d90">Days 61–90</h2>
+        <h3>Priorities</h3>
+        <ul>
+          <li><em>Paste your exact 61–90 day priorities…</em></li>
+        </ul>
+        <h3>Outcomes</h3>
+        <ul>
+          <li><em>Paste your exact 61–90 day outcomes…</em></li>
+        </ul>
+
+        <div class="div"></div>
+
+        <h2 id="d180">Days 91–180</h2>
+        <h3>Priorities</h3>
+        <ul>
+          <li><em>Paste your exact 91–180 day priorities…</em></li>
+        </ul>
+        <h3>Outcomes</h3>
+        <ul>
+          <li><em>Paste your exact 91–180 day outcomes…</em></li>
+        </ul>
+
+      </article>
+      <!-- ===== END: YOUR PLAN CONTENT ===== -->
+
+      <p class="subtle" style="margin-top:10px">
+        Tip: you can paste rich HTML (lists, headings, tables) — no scripts needed. The left navigation links match the
+        section IDs (<code>#exec-summary</code>, <code>#d30</code>, <code>#d60</code>, <code>#d90</code>, <code>#d180</code>).
+      </p>
+    </div>
+  </div>
+
+</body>
+</html>
