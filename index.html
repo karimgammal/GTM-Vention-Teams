@@ -1,315 +1,216 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>GTM Strategy — Vention Teams</title>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Vention Teams — GTM Strategy</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
 <style>
   :root{
-    --brand-900:#0E3E8C; --brand-800:#0A2E69; --ink:#111827; --muted:#4B5563;
-    --bg:#F9FAFB; --card:#FFFFFF; --ring:#E5E7EB; --sky:#60A5FA; --ok:#10B981; --warn:#F59E0B;
+    /* Vention-ish palette */
+    --navy:#0d1b2a;      /* header */
+    --navy-2:#0f2235;    /* tabs bg */
+    --blue:#2a6fdb;      /* accent */
+    --ink:#0b1220;       /* body text */
+    --muted:#5b6878;     /* subtext */
+    --bg:#f6f8fb;        /* page bg */
+    --card:#ffffff;      /* surfaces */
+    --line:#e9eef5;
   }
   *{box-sizing:border-box}
   body{margin:0;background:var(--bg);color:var(--ink);font-family:Inter,system-ui,Segoe UI,Roboto,Helvetica,Arial,sans-serif;line-height:1.6}
-  .nav{position:sticky;top:0;z-index:10;backdrop-filter:blur(6px);background:rgba(255,255,255,.85);border-bottom:1px solid #e5e7eb}
-  .nav-inner{max-width:1100px;margin:auto;height:56px;display:flex;align-items:center;justify-content:space-between;padding:0 20px}
-  .hero{background:linear-gradient(180deg,var(--brand-900),var(--brand-800));color:#fff}
-  .container{max-width:1100px;margin:auto;padding:0 20px}
-  .hero-inner{padding:42px 0;display:grid;gap:24px;grid-template-columns:1.2fr .8fr}
-  .pill{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.25);border-radius:18px;padding:10px 14px;display:inline-flex;gap:8px}
-  .metric{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.25);border-radius:14px;padding:14px}
-  h1{font-size:42px;line-height:1.1;margin:0 0 10px;font-weight:800}
-  h2{font-size:28px;margin:0 0 12px}
-  h3{font-size:20px;margin:0 0 8px}
-  section{margin:36px 0}
-  .grid2{display:grid;gap:16px;grid-template-columns:1fr 1fr}
-  .cards{display:grid;gap:16px;grid-template-columns:1fr 1fr}
-  .card{background:var(--card);border:1px solid var(--ring);border-radius:14px;padding:18px}
-  .muted{color:var(--muted)}
-  .btn{display:inline-flex;align-items:center;gap:8px;padding:10px 14px;border-radius:12px;border:1px solid rgba(255,255,255,.35);color:#fff;text-decoration:none}
-  .btn.alt{background:#fff;border-color:#fff;color:#111827;font-weight:600}
-  .table{width:100%;border-collapse:collapse}
-  .table th,.table td{border-bottom:1px solid var(--ring);padding:8px 10px;text-align:right;font-variant-numeric:tabular-nums}
-  .table th:first-child,.table td:first-child{text-align:left}
-  .kpis{display:grid;gap:16px;grid-template-columns:1fr 1fr}
-  footer{background:#0f172a;color:#fff;margin-top:48px}
-  footer .container{padding:18px 20px}
-  /* form */
-  .row{display:grid;gap:14px;grid-template-columns:repeat(3,1fr)}
-  .row4{display:grid;gap:14px;grid-template-columns:repeat(4,1fr)}
-  label{font-size:12px;font-weight:600;color:#374151;display:block;margin-bottom:6px}
-  input,select{width:100%;padding:10px 12px;border-radius:10px;border:1px solid var(--ring);background:#fff}
-  .note{font-size:12px;color:#6B7280;margin-top:4px}
-  @media (max-width: 900px){
-    .hero-inner{grid-template-columns:1fr;gap:10px}
-    .grid2,.cards,.row,.row4,.kpis{grid-template-columns:1fr}
-    h1{font-size:34px}
+  header{
+    background:linear-gradient(180deg,var(--navy),#102540);
+    color:#fff;
+    padding:36px 16px;
   }
+  .container{max-width:1180px;margin:auto;padding:0 16px}
+  h1{margin:0;font-weight:800;font-size:40px;letter-spacing:-0.01em}
+  .sub{opacity:.85;margin-top:6px}
+  .tabs{
+    background:var(--card);
+    border:1px solid var(--line);
+    border-radius:14px;
+    margin-top:-24px;
+    box-shadow:0 4px 24px rgba(0,0,0,.06);
+    overflow:hidden;
+  }
+  .tabbar{
+    display:flex;flex-wrap:wrap;
+    background:var(--navy-2);
+    padding:6px;
+    gap:6px;
+  }
+  .tab{
+    color:#c9d6ea;
+    background:transparent;
+    border:1px solid transparent;
+    padding:10px 14px;
+    border-radius:10px;
+    font-weight:600;
+    cursor:pointer;
+  }
+  .tab[aria-selected="true"]{
+    color:#fff;background:#183051;border-color:#2e3f62;
+  }
+  .panel{display:none;background:var(--card)}
+  .panel[aria-hidden="false"]{display:block}
+  .panel-inner{padding:18px}
+  .hero-note{
+    display:flex;align-items:center;gap:10px;
+    background:linear-gradient(90deg,#0f2235,#163259);
+    color:#eaf2ff;border:1px solid #233a62;
+    border-radius:12px;padding:12px 14px;margin-top:12px
+  }
+  .iframe-wrap{
+    width:100%;height:78vh;min-height:560px;
+    border:1px solid var(--line);border-radius:12px;overflow:hidden;
+    background:linear-gradient(180deg,#f8fbff,#f5f7fb)
+  }
+  iframe{width:100%;height:100%;border:0}
+  .info{font-size:14px;color:var(--muted)}
+  .pill{
+    display:inline-flex;gap:8px;align-items:center;
+    background:#0d1b2a; color:#cfe2ff; border:1px solid #223555;
+    border-radius:999px; padding:6px 10px; font-size:12px; margin-right:6px
+  }
+  .kicker{display:flex;flex-wrap:wrap;gap:6px;margin-top:14px}
+  .todo{
+    display:grid;place-items:center;height:78vh;min-height:560px;color:#6d7a8f
+  }
+  footer{color:#7e8aa4;font-size:13px;padding:24px 0}
+  a.link{color:var(--blue);text-decoration:underline}
 </style>
 </head>
 <body>
-
-<!-- Top nav -->
-<div class="nav">
-  <div class="nav-inner">
-    <div style="display:flex;align-items:center;gap:10px">
-      <div style="width:28px;height:28px;border-radius:8px;background:linear-gradient(135deg,#2AA0FF,#76C5FF)"></div>
-      <strong>Vention Teams — GTM Plan</strong>
+<header>
+  <div class="container">
+    <h1>Vention Teams — GTM Strategy</h1>
+    <div class="sub">Fintech & Healthcare • AE full-cycle • $200K avg deal • Ramp + Sales Cycle</div>
+    <div class="kicker">
+      <span class="pill">Exec Summary</span>
+      <span class="pill">30-60-90-180 plan</span>
+      <span class="pill">Calculators & Enablement</span>
     </div>
-    <div style="display:flex;gap:16px;font-size:14px">
-      <a href="#summary" style="color:#111827;text-decoration:none">Summary</a>
-      <a href="#story" style="color:#111827;text-decoration:none">Story</a>
-      <a href="#plan" style="color:#111827;text-decoration:none">30-60-90-180</a>
-      <a href="#calc" style="color:#111827;text-decoration:none">Calculator</a>
-      <a href="#why" style="color:#111827;text-decoration:none">Why it Works</a>
-    </div>
-  </div>
-</div>
-
-<!-- Hero -->
-<header class="hero">
-  <div class="container hero-inner">
-    <div>
-      <div class="pill">Fintech • Healthcare · AE full-cycle · $200K avg deal · Ramp + Sales cycle</div>
-      <h1>GTM Strategy to Scale Revenue Predictably</h1>
-      <p class="muted" style="color:rgba(255,255,255,.85)">
-        A focused plan to grow pipeline, accelerate revenue, and build a repeatable engine aligned to Vention Teams’ delivery strengths.
-      </p>
-      <div style="display:flex;gap:10px;margin-top:14px">
-        <a class="btn alt" href="#summary">Read the Summary</a>
-        <a class="btn" href="#calc">Open the Calculator</a>
-      </div>
-    </div>
-    <div class="cards">
-      <div class="metric"><div class="muted" style="color:#c7d2fe">Target / AE</div><div style="font-size:22px;font-weight:800">$1M</div></div>
-      <div class="metric"><div class="muted" style="color:#c7d2fe">Sales Cycle</div><div style="font-size:22px;font-weight:800">4–5 mo</div></div>
-      <div class="metric"><div class="muted" style="color:#c7d2fe">Avg Deal</div><div style="font-size:22px;font-weight:800">$200K</div></div>
-      <div class="metric"><div class="muted" style="color:#c7d2fe">Coverage</div><div style="font-size:22px;font-weight:800">5 contacts / acct</div></div>
+    <div class="hero-note">
+      This landing aggregates every artifact without altering your original content. Switch tabs below to view each one.
     </div>
   </div>
 </header>
 
-<main class="container">
-  <!-- Executive Summary -->
-  <section id="summary">
-    <h2>Executive Summary</h2>
-    <div class="grid2">
-      <div class="card">
-        <h3>🎯 Goals</h3>
-        <ul>
-          <li>$1M quota per AE; fix BDR under-performance via coaching + channel focus</li>
-          <li>Verticalized plays for Fintech & Healthcare; ABM + field events</li>
-          <li>Realistic ramp and lag modeled for forecast credibility</li>
-        </ul>
-      </div>
-      <div class="card">
-        <h3>⚙️ Levers</h3>
-        <ul>
-          <li>Accounts-first coverage (5 contacts/account), exec multi-threading</li>
-          <li>Comp accelerators at 100%+, quarterly performance bonuses</li>
-          <li>Community-led sales (panels/dinners) to compress cycle & raise ACV</li>
-        </ul>
-      </div>
+<main class="container" style="margin-top:24px">
+  <section class="tabs" role="tablist" aria-label="Vention GTM Tabs">
+    <div class="tabbar">
+      <button class="tab" role="tab" aria-selected="true" aria-controls="panel-plan" id="tab-plan">30-60-90-180 Plan</button>
+      <button class="tab" role="tab" aria-selected="false" aria-controls="panel-gtm" id="tab-gtm">GTM Revenue & Activity Calculator</button>
+      <button class="tab" role="tab" aria-selected="false" aria-controls="panel-budget" id="tab-budget">Sales Budget Calculator</button>
+      <button class="tab" role="tab" aria-selected="false" aria-controls="panel-enable" id="tab-enable">Team Enablement Framework</button>
+      <button class="tab" role="tab" aria-selected="false" aria-controls="panel-career" id="tab-career">Sales Career Path</button>
     </div>
-  </section>
 
-  <!-- Story -->
-  <section id="story">
-    <h2>Team Size → Quota & Hiring → Comp → Enablement → Channels</h2>
-    <div class="cards">
-      <div class="card">
-        <h3>Team Size, Quota & Hiring</h3>
-        <p>Inherit 4 AEs; hire in cohorts with 1-month ramp. Revenue recognition lags by the sales cycle.</p>
-      </div>
-      <div class="card">
-        <h3>Comp & Incentives</h3>
-        <p>Transparent OTE, tiered commissions at 80/100/120%+, and accelerators rewarding multi-threaded wins and forecast accuracy.</p>
-      </div>
-      <div class="card">
-        <h3>Team Enablement</h3>
-        <p>ICPs, messaging playbooks, objection handling, deal reviews, and a technical POC lane for complex evaluations.</p>
-      </div>
-      <div class="card">
-        <h3>Acquisition Channels</h3>
-        <p>Outbound ABM + field events, partner intros, and retargeting to lift reply→meeting conversions with credibility content.</p>
-      </div>
-    </div>
-  </section>
-
-  <!-- 30-60-90-180 -->
-  <section id="plan">
-    <h2>30-60-90-180 Execution</h2>
-    <div class="cards">
-      <div class="card">
-        <h3>0–30 (Foundation)</h3>
-        <ul><li>Confirm model & forecast rhythm</li><li>Finalize ICPs & plays</li><li>BDR coaching to quality</li><li>Spin up panels/dinners calendar</li></ul>
-      </div>
-      <div class="card">
-        <h3>31–60 (Execute)</h3>
-        <ul><li>Hire cohort 1; 1-month ramp</li><li>ABM live; field events start</li><li>Deal reviews & pattern library</li><li>Finalize accelerators</li></ul>
-      </div>
-      <div class="card">
-        <h3>61–90 (Optimize)</h3>
-        <ul><li>Cohort 1 closing; cohort 2 decision</li><li>Expand partner/channel experiments</li><li>Publish 2–3 case studies</li><li>Tighten stage exits & forecast</li></ul>
-      </div>
-      <div class="card">
-        <h3>91–180 (Scale)</h3>
-        <ul><li>Repeatable motion: 3–4× coverage</li><li>Lift ACV via exec alignment</li><li>Operationalize panels/dinners</li><li>Hire throttle tied to signals</li></ul>
-      </div>
-    </div>
-  </section>
-
-  <!-- Calculator: zero-build, inline JS -->
-  <section id="calc">
-    <h2>GTM Calculator (Headcount ↔ Revenue)</h2>
-    <div class="card" style="border-color:#dbeafe">
-      <div class="row4">
-        <div><label>Horizon (months)</label><input id="horizon" type="number" min="6" max="36" value="12"></div>
-        <div><label>Starting AEs (inherited)</label><input id="startAEs" type="number" min="0" value="4"></div>
-        <div><label>Quota / AE (annual, $)</label><input id="quota" type="number" min="0" value="1000000"></div>
-        <div><label>Inherited Attainment (%)</label><input id="inhPct" type="number" min="0" max="150" value="50"></div>
-      </div>
-      <div class="row4" style="margin-top:12px">
-        <div><label>New Hires in M1</label><input id="m1Hires" type="number" min="0" value="2"></div>
-        <div><label>Quota Attainment (%)</label><input id="attain" type="number" min="0" max="150" value="85"></div>
-        <div><label>Sales Cycle (months)</label><input id="cycle" type="number" min="1" max="12" value="4"></div>
-        <div><label>Ramp (months)</label>
-          <select id="ramp">
-            <option value="1" selected>1 (50% then 100%)</option>
-            <option value="2">2 (50% → 75% → 100%)</option>
-            <option value="3">3 (33% → 66% → 100%)</option>
-          </select>
+    <!-- TAB 1: Plan summary (host your own page or paste a doc URL) -->
+    <div class="panel" id="panel-plan" role="tabpanel" aria-labelledby="tab-plan" aria-hidden="false">
+      <div class="panel-inner">
+        <p class="info">This tab embeds your **30-60-90-180** plan exactly as authored. Set <code>PLAN_URL</code> below to the page that contains your plan (e.g., a GitHub Pages URL or a published doc).</p>
+        <div class="iframe-wrap" id="wrap-plan">
+          <div class="todo" id="todo-plan">Set <code>PLAN_URL</code> in the script to display your plan.</div>
         </div>
       </div>
-      <div class="note">Recognized revenue starts after <strong>Ramp + Sales Cycle</strong> months since hire.</div>
+    </div>
 
-      <div style="margin-top:12px;display:flex;gap:8px">
-        <button id="run" style="padding:10px 14px;border-radius:10px;background:var(--brand-900);color:#fff;border:none">Recalculate</button>
-        <div id="msg" class="note"></div>
+    <!-- TAB 2: GTM Calculator -->
+    <div class="panel" id="panel-gtm" role="tabpanel" aria-labelledby="tab-gtm" aria-hidden="true">
+      <div class="panel-inner">
+        <p class="info">Embedding the full calculator without modifying content. Set <code>GTM_URL</code> to the page that renders your component.</p>
+        <div class="iframe-wrap" id="wrap-gtm">
+          <div class="todo" id="todo-gtm">Set <code>GTM_URL</code> in the script to display your calculator.</div>
+        </div>
       </div>
+    </div>
 
-      <div id="summary" style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:14px">
-        <div class="card"><div class="muted">Final AE Count</div><div id="s_final" style="font-weight:800;font-size:20px">—</div></div>
-        <div class="card"><div class="muted">Revenue – Inherited</div><div id="s_inh" style="font-weight:800;font-size:20px">—</div></div>
-        <div class="card"><div class="muted">Revenue – New Hires</div><div id="s_new" style="font-weight:800;font-size:20px">—</div></div>
-        <div class="card"><div class="muted">Revenue – Total</div><div id="s_tot" style="font-weight:800;font-size:20px">—</div></div>
+    <!-- TAB 3: Sales Budget Calculator -->
+    <div class="panel" id="panel-budget" role="tabpanel" aria-labelledby="tab-budget" aria-hidden="true">
+      <div class="panel-inner">
+        <p class="info">Set <code>BUDGET_URL</code> to the page where your Sales Budget Calculator is published.</p>
+        <div class="iframe-wrap" id="wrap-budget">
+          <div class="todo" id="todo-budget">Set <code>BUDGET_URL</code> in the script to display your budget calculator.</div>
+        </div>
       </div>
+    </div>
 
-      <div style="overflow:auto;margin-top:12px">
-        <table class="table" id="tbl">
-          <thead><tr id="months"><th>Month</th></tr></thead>
-          <tbody>
-            <tr id="aeRow"><td>AEs (end of month)</td></tr>
-            <tr id="inhRow"><td>Revenue – Inherited</td></tr>
-            <tr id="newRow"><td>Revenue – New Hires</td></tr>
-            <tr id="totRow"><td><strong>Revenue – Total</strong></td></tr>
-          </tbody>
-        </table>
+    <!-- TAB 4: Team Enablement Framework -->
+    <div class="panel" id="panel-enable" role="tabpanel" aria-labelledby="tab-enable" aria-hidden="true">
+      <div class="panel-inner">
+        <p class="info">Set <code>ENABLE_URL</code> to the page where your Enablement Framework is published.</p>
+        <div class="iframe-wrap" id="wrap-enable">
+          <div class="todo" id="todo-enable">Set <code>ENABLE_URL</code> in the script to display your enablement framework.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB 5: Sales Career Path -->
+    <div class="panel" id="panel-career" role="tabpanel" aria-labelledby="tab-career" aria-hidden="true">
+      <div class="panel-inner">
+        <p class="info">Set <code>CAREER_URL</code> to the page where your Sales Career Path is published.</p>
+        <div class="iframe-wrap" id="wrap-career">
+          <div class="todo" id="todo-career">Set <code>CAREER_URL</code> in the script to display your career path.</div>
+        </div>
       </div>
     </div>
   </section>
 
-  <!-- Why it works -->
-  <section id="why">
-    <h2>Why This Strategy Works</h2>
-    <div class="kpis">
-      <div class="card">
-        <h3>Leading Indicators</h3>
-        <ul>
-          <li>Account penetration (5 contacts/account)</li>
-          <li>Reply→meeting conversion by channel</li>
-          <li>Pipeline velocity by stage; POC cycle time</li>
-          <li>Field-event sourced SQLs and ACV lift</li>
-        </ul>
-      </div>
-      <div class="card">
-        <h3>Lagging Signals & De-risking</h3>
-        <ul>
-          <li>Win-rate by persona/vertical; raise the bar where low</li>
-          <li>Forecast accuracy & slipped deals → coaching</li>
-          <li>Attainment pacing vs. headcount gate (hire throttle)</li>
-          <li>COGS/margin guardrails vs. delivery capacity</li>
-        </ul>
-      </div>
-    </div>
-  </section>
+  <footer>
+    Built for Vention Teams · Fintech & Healthcare
+  </footer>
 </main>
 
-<footer>
-  <div class="container">Built for Vention Teams • Fintech & Healthcare • © 2025</div>
-</footer>
-
 <script>
-  const $ = (id)=>document.getElementById(id);
-  const fmtMoney = n => (Math.round(n)).toLocaleString(undefined,{style:'currency',currency:'USD',maximumFractionDigits:0});
+  // 1) Put your published page URLs here (GitHub Pages for each artifact).
+  //    Example: const GTM_URL = "https://<you>.github.io/gtm-calculator/";
+  const PLAN_URL   = ""; // 30-60-90-180 Plan page URL
+  const GTM_URL    = ""; // GTM Revenue & Activity Calculator page URL
+  const BUDGET_URL = ""; // Sales Budget Calculator page URL
+  const ENABLE_URL = ""; // Team Enablement Framework page URL
+  const CAREER_URL = ""; // Sales Career Path page URL
 
-  function rampFactor(idx, rampMonths){
-    if(rampMonths===1) return idx===1?0.5:1;
-    if(rampMonths===2) return idx===1?0.5:(idx===2?0.75:1);
-    return idx===1?0.33:(idx===2?0.66:1);
+  // Helper to mount an iframe only when a URL is set
+  function mountIframe(wrapperId, todoId, url){
+    const wrap = document.getElementById(wrapperId);
+    const todo = document.getElementById(todoId);
+    if(!wrap) return;
+    wrap.innerHTML = "";
+    if(!url){
+      // Show TODO if empty
+      const div = document.createElement("div");
+      div.className = "todo";
+      div.textContent = "Set this tab's URL in the script to show your content.";
+      wrap.appendChild(div);
+      return;
+    }
+    const iframe = document.createElement("iframe");
+    iframe.loading = "lazy";
+    iframe.referrerPolicy = "no-referrer-when-downgrade";
+    iframe.src = url;
+    wrap.appendChild(iframe);
   }
 
-  function run(){
-    const H = Math.max(6, Math.min(36, Number($('horizon').value)||12));
-    const startAEs = Math.max(0, Number($('startAEs').value)||0);
-    const quota = Math.max(0, Number($('quota').value)||0);
-    const inhPct = Math.max(0, Math.min(150, Number($('inhPct').value)||0))/100;
-    const m1Hires = Math.max(0, Number($('m1Hires').value)||0);
-    const attain = Math.max(0, Math.min(150, Number($('attain').value)||0))/100;
-    const cycle = Math.max(1, Math.min(12, Number($('cycle').value)||4));
-    const ramp = Number($('ramp').value)||1;
-
-    const months = Array.from({length:H},(_,i)=>`M${i+1}`);
-    // headers
-    const mh = $('months'); mh.innerHTML='<th>Month</th>'+months.map(m=>`<th>${m}</th>`).join('');
-    const aeRow = $('aeRow'), inhRow=$('inhRow'), newRow=$('newRow'), totRow=$('totRow');
-    aeRow.innerHTML='<td>AEs (end of month)</td>';
-    inhRow.innerHTML='<td>Revenue – Inherited</td>';
-    newRow.innerHTML='<td>Revenue – New Hires</td>';
-    totRow.innerHTML='<td><strong>Revenue – Total</strong></td>';
-
-    const monthlyQuota = quota/12;
-    const AEs = new Array(H).fill(0);
-    const inhRev = new Array(H).fill(0);
-    const newRev = new Array(H).fill(0);
-
-    // AEs count over time (only M1 hires in this lightweight version)
-    for(let m=0;m<H;m++){
-      AEs[m] = startAEs + (m>=0?m1Hires:0);
-      inhRev[m] = startAEs * monthlyQuota * inhPct;
-    }
-
-    // New hires recognition: starts after ramp + sales cycle months from hire
-    const startOffset = ramp + cycle; // months since hire when recognition begins
-    const monthsRecognized = Math.max(1, 12 - startOffset); // spread remaining first-year months equally
-    const perAEPerMonth = (quota * attain) / monthsRecognized;
-
-    const startIdx = startOffset-1; // since hires are at M1 timeline index 0
-    for(let m=startIdx; m<Math.min(11,H-1)+1; m++){ // up to first 12 months
-      if(m>=0 && m<H) newRev[m] += m1Hires * perAEPerMonth;
-    }
-
-    const totRev = new Array(H).fill(0);
-    for(let m=0;m<H;m++){
-      totRev[m] = inhRev[m] + newRev[m];
-      aeRow.innerHTML += `<td>${AEs[m]}</td>`;
-      inhRow.innerHTML += `<td>${fmtMoney(inhRev[m])}</td>`;
-      newRow.innerHTML += `<td>${fmtMoney(newRev[m])}</td>`;
-      totRow.innerHTML += `<td><strong>${fmtMoney(totRev[m])}</strong></td>`;
-    }
-
-    $('s_final').textContent = AEs[H-1];
-    $('s_inh').textContent = fmtMoney(inhRev.reduce((a,b)=>a+b,0));
-    $('s_new').textContent = fmtMoney(newRev.reduce((a,b)=>a+b,0));
-    $('s_tot').textContent = fmtMoney(totRev.reduce((a,b)=>a+b,0));
-    $('msg').textContent = `Recognition begins Month ${startOffset} of tenure (ramp ${ramp} + cycle ${cycle}).`;
+  // Tabs
+  const tabs = Array.from(document.querySelectorAll(".tab"));
+  const panels = Array.from(document.querySelectorAll(".panel"));
+  function selectTab(idx){
+    tabs.forEach((t,i)=>t.setAttribute("aria-selected", i===idx ? "true":"false"));
+    panels.forEach((p,i)=>p.setAttribute("aria-hidden", i===idx ? "false":"true"));
+    // lazily mount iframe on first open for each panel
+    if(idx===0) mountIframe("wrap-plan","todo-plan",PLAN_URL);
+    if(idx===1) mountIframe("wrap-gtm","todo-gtm",GTM_URL);
+    if(idx===2) mountIframe("wrap-budget","todo-budget",BUDGET_URL);
+    if(idx===3) mountIframe("wrap-enable","todo-enable",ENABLE_URL);
+    if(idx===4) mountIframe("wrap-career","todo-career",CAREER_URL);
   }
-
-  $('run').addEventListener('click', run);
-  run();
+  tabs.forEach((t,i)=>t.addEventListener("click",()=>selectTab(i)));
+  selectTab(0);
 </script>
 </body>
 </html>
