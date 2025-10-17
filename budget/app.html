@@ -1,0 +1,169 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Sales Budget Calculator</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{--charcoal:#1f2937;--charcoal-2:#111827;--orange:#f97316;--line:#e5e7eb;--bg:#f6f7f9;--card:#fff}
+  *{box-sizing:border-box} body{margin:0;background:var(--bg);font-family:Inter,system-ui,Segoe UI,Roboto,Helvetica,Arial,sans-serif}
+  header{background:linear-gradient(180deg,var(--charcoal),var(--charcoal-2));color:#fff;padding:16px 20px}
+  header h1{margin:0;font-weight:800}
+  .container{max-width:1200px;margin:18px auto;padding:0 16px}
+  .section{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px 18px;margin:14px 0}
+</style>
+<script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
+<script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
+<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+</head><body>
+<header><div class="container"><h1>Sales Budget Calculator</h1></div></header>
+<div id="root" class="container"></div>
+<script type="text/babel" data-presets="react,typescript">
+const { useState, useMemo } = React;
+
+/* icon shims for GitHub Pages (no external packages) */
+const DollarSign = (props) => (React.createElement('span', {style:{marginRight:6}}, '💲'));
+const Users = (props) => (React.createElement('span', {style:{marginRight:6}}, '👥'));
+const TrendingUp = (props) => (React.createElement('span', {style:{marginRight:6}}, '📈'));
+const Award = (props) => (React.createElement('span', {style:{marginRight:6}}, '🏆'));
+const Calculator = (props) => (React.createElement('span', {style:{marginRight:6}}, '🧮'));
+
+/* === Begin pasted content from sales_budget_calculator.tsx (imports removed) === */
+const SalesBudgetCalculator = () => {
+  // Team Structure
+  const [inheritedReps, setInheritedReps] = useState(4);
+  const [newHiresM2, setNewHiresM2] = useState(2);
+  const [newHiresM9, setNewHiresM9] = useState(2);
+  
+  // Comp Plan
+  const [baseSalary, setBaseSalary] = useState(80000);
+  const [quotaPerRep, setQuotaPerRep] = useState(1000000);
+  const [commRate80, setCommRate80] = useState(8);
+  const [commRate100, setCommRate100] = useState(10);
+  const [commRate120, setCommRate120] = useState(12);
+
+  // Attainment assumptions
+  const [attainInherit, setAttainInherit] = useState(50); // %
+  const [attainNewHires, setAttainNewHires] = useState(85); // %
+  const [rampMonths, setRampMonths] = useState(1); // months until full productivity
+  const [salesCycle, setSalesCycle] = useState(5); // months to recognition lag (1 ramp + 4 cycle)
+
+  // Helpers
+  const money = (n:number)=> (Number(n)||0).toLocaleString(undefined,{style:"currency",currency:"USD",maximumFractionDigits:0});
+
+  // Headcount by month (12 months horizon shown in UI)
+  const months = useMemo(()=>Array.from({length:12},(_,i)=>`M${i+1}`),[]);
+  const hires = useMemo(()=>({ M2:newHiresM2, M9:newHiresM9 }),[newHiresM2,newHiresM9]);
+
+  const totalRepsByMonth = useMemo(()=>{
+    const arr = new Array(12).fill(inheritedReps);
+    for(let i=1;i<12;i++){
+      if(i===1) arr[i] += hires.M2||0;       // M2 hires counted from end of M2
+      if(i===8) arr[i] += hires.M9||0;       // M9 hires counted from end of M9
+      if(i>1) arr[i]+=arr[i-1]-inheritedReps;
+    }
+    // Simpler: start with inherited; add hires when they appear
+    let cum = inheritedReps;
+    for(let i=0;i<12;i++){
+      if(i===1) cum+=hires.M2||0;
+      if(i===8) cum+=hires.M9||0;
+      arr[i]=cum;
+    }
+    return arr;
+  },[inheritedReps,hires]);
+
+  // Compensation model
+  const onTargetEarnings = useMemo(()=>baseSalary + (quotaPerRep*commRate100/100),[baseSalary,quotaPerRep,commRate100]);
+  const variableAt80 = useMemo(()=>quotaPerRep*commRate80/100,[quotaPerRep,commRate80]);
+  const variableAt120 = useMemo(()=>quotaPerRep*commRate120/100,[quotaPerRep,commRate120]);
+
+  // Revenue recognition per rep (very simplified illustrative model)
+  const monthlyQuota = quotaPerRep/12;
+  const inheritMonthlyRev = monthlyQuota*(attainInherit/100);
+  const newHireMonthlyRevFull = monthlyQuota*(attainNewHires/100);
+
+  const recognizedNewHire = useMemo(()=>{
+    // Each cohort recognizes starting at (ramp + salesCycle - ramp alignment) -> using 1-month ramp assumption
+    const startOffset = rampMonths + (salesCycle-1); // align to your 1+4 default = 4 start offset
+    const monthsRecognized = Math.max(1, 12 - startOffset);
+    return (newHireMonthlyRevFull * 12) / monthsRecognized; // spread across their recognition months
+  },[newHireMonthlyRevFull,rampMonths,salesCycle]);
+
+  const revenueByMonth = useMemo(()=>{
+    const m = new Array(12).fill(0);
+    // Inherited
+    for(let i=0;i<12;i++) m[i] += inheritedReps*inheritMonthlyRev;
+    // New-hire cohorts (M2 and M9), recognition starts after offset
+    const offset = rampMonths + (salesCycle-1);
+    const perMonth = (newHireMonthlyRevFull*12) / Math.max(1,12-offset);
+    for(let i=0;i<12;i++){
+      // M2 cohort starts at month (1 + offset)
+      const startM2 = 1 + offset;
+      if(i>=startM2 && (hires.M2||0)>0) m[i] += (hires.M2||0)*perMonth;
+      // M9 cohort starts at month (8 + offset)
+      const startM9 = 8 + offset;
+      if(i>=startM9 && (hires.M9||0)>0) m[i] += (hires.M9||0)*perMonth;
+    }
+    return m;
+  },[inheritMonthlyRev,newHireMonthlyRevFull,inheritedReps,hires,rampMonths,salesCycle]);
+
+  const totalRevenue = useMemo(()=>revenueByMonth.reduce((a,b)=>a+b,0),[revenueByMonth]);
+
+  return (
+    <div>
+      <div className="section">
+        <h2 style={{margin:0, display:"flex", alignItems:"center"}}><Calculator/> Sales Budget Inputs</h2>
+        <div style={{display:"grid", gridTemplateColumns:"repeat(3, minmax(200px, 1fr))", gap:12, marginTop:10}}>
+          <div><label>Inherited reps</label><input type="number" value={inheritedReps} min={0} onChange={e=>setInheritedReps(+e.target.value||0)}/></div>
+          <div><label>New hires (M2)</label><input type="number" value={newHiresM2} min={0} onChange={e=>setNewHiresM2(+e.target.value||0)}/></div>
+          <div><label>New hires (M9)</label><input type="number" value={newHiresM9} min={0} onChange={e=>setNewHiresM9(+e.target.value||0)}/></div>
+
+          <div><label>Base salary</label><input type="number" value={baseSalary} min={0} onChange={e=>setBaseSalary(+e.target.value||0)}/></div>
+          <div><label>Quota per rep (annual)</label><input type="number" value={quotaPerRep} min={0} onChange={e=>setQuotaPerRep(+e.target.value||0)}/></div>
+          <div><label>Commission @ 80% (%)</label><input type="number" value={commRate80} min={0} onChange={e=>setCommRate80(+e.target.value||0)}/></div>
+          <div><label>Commission @ 100% (%)</label><input type="number" value={commRate100} min={0} onChange={e=>setCommRate100(+e.target.value||0)}/></div>
+          <div><label>Commission @ 120% (%)</label><input type="number" value={commRate120} min={0} onChange={e=>setCommRate120(+e.target.value||0)}/></div>
+
+          <div><label>Inherited attainment (%)</label><input type="number" value={attainInherit} min={0} onChange={e=>setAttainInherit(+e.target.value||0)}/></div>
+          <div><label>New hire attainment (%)</label><input type="number" value={attainNewHires} min={0} onChange={e=>setAttainNewHires(+e.target.value||0)}/></div>
+          <div><label>Ramp months</label><input type="number" value={rampMonths} min={0} onChange={e=>setRampMonths(+e.target.value||0)}/></div>
+          <div><label>Sales cycle (months)</label><input type="number" value={salesCycle} min={1} onChange={e=>setSalesCycle(+e.target.value||1)}/></div>
+        </div>
+        <div style={{display:"grid",gridTemplateColumns:"repeat(4,minmax(180px,1fr))",gap:12,marginTop:12}}>
+          <div className="section" style={{margin:0}}><div style={{color:"#6b7280",fontSize:12}}><Users/> Total reps by year-end</div><div style={{fontWeight:800,fontSize:20,marginTop:4}}>{inheritedReps + newHiresM2 + newHiresM9}</div></div>
+          <div className="section" style={{margin:0}}><div style={{color:"#6b7280",fontSize:12}}><DollarSign/> OTE (100%)</div><div style={{fontWeight:800,fontSize:20,marginTop:4}}>{money(onTargetEarnings)}</div></div>
+          <div className="section" style={{margin:0}}><div style={{color:"#6b7280",fontSize:12}}><TrendingUp/> Annual quota / rep</div><div style={{fontWeight:800,fontSize:20,marginTop:4}}>{money(quotaPerRep)}</div></div>
+          <div className="section" style={{margin:0}}><div style={{color:"#6b7280",fontSize:12}}><Award/> Forecast revenue (12 mo)</div><div style={{fontWeight:800,fontSize:20,marginTop:4}}>{money(totalRevenue)}</div></div>
+        </div>
+      </div>
+
+      <div className="section">
+        <h2 style={{margin:0}}>Revenue (recognized) by Month</h2>
+        <div style={{overflowX:"auto",border:"1px solid #e5e7eb",borderRadius:12,marginTop:10}}>
+          <table style={{width:"100%",borderCollapse:"collapse",minWidth:760}}>
+            <thead>
+              <tr style={{background:"#f9fafb"}}>
+                <th style={{padding:"10px 8px",textAlign:"left"}}>Month</th>
+                {months.map(m=> <th key={m} style={{padding:"10px 8px",textAlign:"right"}}>{m}</th>)}
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td style={{padding:"10px 8px",fontWeight:600}}>Reps (end of month)</td>
+                {totalRepsByMonth.map((v,i)=><td key={i} style={{padding:"10px 8px",textAlign:"right"}}>{v}</td>)}
+              </tr>
+              <tr>
+                <td style={{padding:"10px 8px",fontWeight:600}}>Revenue — Total (recognized)</td>
+                {revenueByMonth.map((v,i)=><td key={i} style={{padding:"10px 8px",textAlign:"right"}}>{money(v)}</td>)}
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  );
+};
+/* === End pasted content === */
+
+const root = ReactDOM.createRoot(document.getElementById('root'));
+root.render(React.createElement(SalesBudgetCalculator, null));
+</script>
+</body></html>
