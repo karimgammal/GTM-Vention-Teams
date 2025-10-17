@@ -9,79 +9,39 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
 <style>
   :root{
-    /* Vention-ish palette */
-    --navy:#0d1b2a;      /* header */
-    --navy-2:#0f2235;    /* tabs bg */
-    --blue:#2a6fdb;      /* accent */
-    --ink:#0b1220;       /* body text */
-    --muted:#5b6878;     /* subtext */
-    --bg:#f6f8fb;        /* page bg */
-    --card:#ffffff;      /* surfaces */
-    --line:#e9eef5;
+    /* Vention-style: orange + charcoal/gray */
+    --charcoal:#1f2937;      /* header/nav */
+    --charcoal-2:#111827;    /* deeper header */
+    --orange:#f97316;        /* primary */
+    --orange-600:#ea580c;    /* hover/active */
+    --ink:#111827;           /* body text */
+    --muted:#6b7280;         /* subtext */
+    --bg:#f6f7f9;            /* page bg */
+    --card:#ffffff;          /* surfaces */
+    --line:#e5e7eb;          /* borders */
+    --tabs:#2b3442;          /* tab bar bg */
   }
   *{box-sizing:border-box}
   body{margin:0;background:var(--bg);color:var(--ink);font-family:Inter,system-ui,Segoe UI,Roboto,Helvetica,Arial,sans-serif;line-height:1.6}
-  header{
-    background:linear-gradient(180deg,var(--navy),#102540);
-    color:#fff;
-    padding:36px 16px;
-  }
+  header{background:linear-gradient(180deg,var(--charcoal),var(--charcoal-2));color:#fff;padding:36px 16px}
   .container{max-width:1180px;margin:auto;padding:0 16px}
   h1{margin:0;font-weight:800;font-size:40px;letter-spacing:-0.01em}
   .sub{opacity:.85;margin-top:6px}
-  .tabs{
-    background:var(--card);
-    border:1px solid var(--line);
-    border-radius:14px;
-    margin-top:-24px;
-    box-shadow:0 4px 24px rgba(0,0,0,.06);
-    overflow:hidden;
-  }
-  .tabbar{
-    display:flex;flex-wrap:wrap;
-    background:var(--navy-2);
-    padding:6px;
-    gap:6px;
-  }
-  .tab{
-    color:#c9d6ea;
-    background:transparent;
-    border:1px solid transparent;
-    padding:10px 14px;
-    border-radius:10px;
-    font-weight:600;
-    cursor:pointer;
-  }
-  .tab[aria-selected="true"]{
-    color:#fff;background:#183051;border-color:#2e3f62;
-  }
+  .kicker{display:flex;flex-wrap:wrap;gap:6px;margin-top:14px}
+  .pill{display:inline-flex;gap:8px;align-items:center;background:var(--charcoal);color:#ffd7bf;border:1px solid #2f3a4a;border-radius:999px;padding:6px 10px;font-size:12px}
+  .hero-note{display:flex;align-items:center;gap:10px;background:linear-gradient(90deg,#2b3442,#3a4555);color:#eaf2ff;border:1px solid #485366;border-radius:12px;padding:12px 14px;margin-top:12px}
+
+  .tabs{background:var(--card);border:1px solid var(--line);border-radius:14px;margin-top:-24px;box-shadow:0 4px 24px rgba(0,0,0,.06);overflow:hidden}
+  .tabbar{display:flex;flex-wrap:wrap;background:var(--tabs);padding:6px;gap:6px}
+  .tab{color:#cfd9ea;background:transparent;border:1px solid transparent;padding:10px 14px;border-radius:10px;font-weight:600;cursor:pointer}
+  .tab[aria-selected="true"]{color:#fff;background:var(--orange);border-color:var(--orange-600)}
   .panel{display:none;background:var(--card)}
   .panel[aria-hidden="false"]{display:block}
   .panel-inner{padding:18px}
-  .hero-note{
-    display:flex;align-items:center;gap:10px;
-    background:linear-gradient(90deg,#0f2235,#163259);
-    color:#eaf2ff;border:1px solid #233a62;
-    border-radius:12px;padding:12px 14px;margin-top:12px
-  }
-  .iframe-wrap{
-    width:100%;height:78vh;min-height:560px;
-    border:1px solid var(--line);border-radius:12px;overflow:hidden;
-    background:linear-gradient(180deg,#f8fbff,#f5f7fb)
-  }
-  iframe{width:100%;height:100%;border:0}
   .info{font-size:14px;color:var(--muted)}
-  .pill{
-    display:inline-flex;gap:8px;align-items:center;
-    background:#0d1b2a; color:#cfe2ff; border:1px solid #223555;
-    border-radius:999px; padding:6px 10px; font-size:12px; margin-right:6px
-  }
-  .kicker{display:flex;flex-wrap:wrap;gap:6px;margin-top:14px}
-  .todo{
-    display:grid;place-items:center;height:78vh;min-height:560px;color:#6d7a8f
-  }
+  .iframe-wrap{width:100%;height:78vh;min-height:560px;border:1px solid var(--line);border-radius:12px;overflow:hidden;background:linear-gradient(180deg,#f8fbff,#f5f7fb)}
+  .todo{display:grid;place-items:center;height:78vh;min-height:560px;color:#6d7a8f}
   footer{color:#7e8aa4;font-size:13px;padding:24px 0}
-  a.link{color:var(--blue);text-decoration:underline}
 </style>
 </head>
 <body>
@@ -91,104 +51,79 @@
     <div class="sub">Fintech & Healthcare • AE full-cycle • $200K avg deal • Ramp + Sales Cycle</div>
     <div class="kicker">
       <span class="pill">Exec Summary</span>
-      <span class="pill">30-60-90-180 plan</span>
-      <span class="pill">Calculators & Enablement</span>
+      <span class="pill">30–60–90–180</span>
+      <span class="pill">Calculators • Enablement • Career Path</span>
     </div>
-    <div class="hero-note">
-      This landing aggregates every artifact without altering your original content. Switch tabs below to view each one.
-    </div>
+    <div class="hero-note">Switch tabs below. Each artifact loads exactly as authored from a subpage in this same repo.</div>
   </div>
 </header>
 
 <main class="container" style="margin-top:24px">
   <section class="tabs" role="tablist" aria-label="Vention GTM Tabs">
     <div class="tabbar">
-      <button class="tab" role="tab" aria-selected="true" aria-controls="panel-plan" id="tab-plan">30-60-90-180 Plan</button>
-      <button class="tab" role="tab" aria-selected="false" aria-controls="panel-gtm" id="tab-gtm">GTM Revenue & Activity Calculator</button>
+      <button class="tab" role="tab" aria-selected="true"  aria-controls="panel-plan"   id="tab-plan">30-60-90-180 Plan</button>
+      <button class="tab" role="tab" aria-selected="false" aria-controls="panel-gtm"    id="tab-gtm">GTM Revenue & Activity Calculator</button>
       <button class="tab" role="tab" aria-selected="false" aria-controls="panel-budget" id="tab-budget">Sales Budget Calculator</button>
       <button class="tab" role="tab" aria-selected="false" aria-controls="panel-enable" id="tab-enable">Team Enablement Framework</button>
       <button class="tab" role="tab" aria-selected="false" aria-controls="panel-career" id="tab-career">Sales Career Path</button>
     </div>
 
-    <!-- TAB 1: Plan summary (host your own page or paste a doc URL) -->
+    <!-- PLAN -->
     <div class="panel" id="panel-plan" role="tabpanel" aria-labelledby="tab-plan" aria-hidden="false">
       <div class="panel-inner">
-        <p class="info">This tab embeds your **30-60-90-180** plan exactly as authored. Set <code>PLAN_URL</code> below to the page that contains your plan (e.g., a GitHub Pages URL or a published doc).</p>
-        <div class="iframe-wrap" id="wrap-plan">
-          <div class="todo" id="todo-plan">Set <code>PLAN_URL</code> in the script to display your plan.</div>
-        </div>
+        <p class="info">Loads from <code>./plan/</code>. Put your plan file as <code>plan/app.html</code> and it will appear automatically.</p>
+        <div class="iframe-wrap" id="wrap-plan"><div class="todo">Waiting for <code>plan/app.html</code>…</div></div>
       </div>
     </div>
 
-    <!-- TAB 2: GTM Calculator -->
+    <!-- GTM CALC -->
     <div class="panel" id="panel-gtm" role="tabpanel" aria-labelledby="tab-gtm" aria-hidden="true">
       <div class="panel-inner">
-        <p class="info">Embedding the full calculator without modifying content. Set <code>GTM_URL</code> to the page that renders your component.</p>
-        <div class="iframe-wrap" id="wrap-gtm">
-          <div class="todo" id="todo-gtm">Set <code>GTM_URL</code> in the script to display your calculator.</div>
-        </div>
+        <p class="info">Loads from <code>./gtm/</code> → <code>gtm/app.html</code>.</p>
+        <div class="iframe-wrap" id="wrap-gtm"><div class="todo">Waiting for <code>gtm/app.html</code>…</div></div>
       </div>
     </div>
 
-    <!-- TAB 3: Sales Budget Calculator -->
+    <!-- BUDGET -->
     <div class="panel" id="panel-budget" role="tabpanel" aria-labelledby="tab-budget" aria-hidden="true">
       <div class="panel-inner">
-        <p class="info">Set <code>BUDGET_URL</code> to the page where your Sales Budget Calculator is published.</p>
-        <div class="iframe-wrap" id="wrap-budget">
-          <div class="todo" id="todo-budget">Set <code>BUDGET_URL</code> in the script to display your budget calculator.</div>
-        </div>
+        <p class="info">Loads from <code>./budget/</code> → <code>budget/app.html</code>.</p>
+        <div class="iframe-wrap" id="wrap-budget"><div class="todo">Waiting for <code>budget/app.html</code>…</div></div>
       </div>
     </div>
 
-    <!-- TAB 4: Team Enablement Framework -->
+    <!-- ENABLEMENT -->
     <div class="panel" id="panel-enable" role="tabpanel" aria-labelledby="tab-enable" aria-hidden="true">
       <div class="panel-inner">
-        <p class="info">Set <code>ENABLE_URL</code> to the page where your Enablement Framework is published.</p>
-        <div class="iframe-wrap" id="wrap-enable">
-          <div class="todo" id="todo-enable">Set <code>ENABLE_URL</code> in the script to display your enablement framework.</div>
-        </div>
+        <p class="info">Loads from <code>./enablement/</code> → <code>enablement/app.html</code>.</p>
+        <div class="iframe-wrap" id="wrap-enable"><div class="todo">Waiting for <code>enablement/app.html</code>…</div></div>
       </div>
     </div>
 
-    <!-- TAB 5: Sales Career Path -->
+    <!-- CAREER -->
     <div class="panel" id="panel-career" role="tabpanel" aria-labelledby="tab-career" aria-hidden="true">
       <div class="panel-inner">
-        <p class="info">Set <code>CAREER_URL</code> to the page where your Sales Career Path is published.</p>
-        <div class="iframe-wrap" id="wrap-career">
-          <div class="todo" id="todo-career">Set <code>CAREER_URL</code> in the script to display your career path.</div>
-        </div>
+        <p class="info">Loads from <code>./career/</code> → <code>career/app.html</code>.</p>
+        <div class="iframe-wrap" id="wrap-career"><div class="todo">Waiting for <code>career/app.html</code>…</div></div>
       </div>
     </div>
   </section>
 
-  <footer>
-    Built for Vention Teams · Fintech & Healthcare
-  </footer>
+  <footer>Built for Vention Teams · Fintech & Healthcare</footer>
 </main>
 
 <script>
-  // 1) Put your published page URLs here (GitHub Pages for each artifact).
-  //    Example: const GTM_URL = "https://<you>.github.io/gtm-calculator/";
-  const PLAN_URL   = ""; // 30-60-90-180 Plan page URL
-  const GTM_URL    = ""; // GTM Revenue & Activity Calculator page URL
-  const BUDGET_URL = ""; // Sales Budget Calculator page URL
-  const ENABLE_URL = ""; // Team Enablement Framework page URL
-  const CAREER_URL = ""; // Sales Career Path page URL
+  /* Relative URLs (same repo, subfolders) */
+  const PLAN_URL   = "./plan/";
+  const GTM_URL    = "./gtm/";
+  const BUDGET_URL = "./budget/";
+  const ENABLE_URL = "./enablement/";
+  const CAREER_URL = "./career/";
 
-  // Helper to mount an iframe only when a URL is set
-  function mountIframe(wrapperId, todoId, url){
+  function mountIframe(wrapperId, url){
     const wrap = document.getElementById(wrapperId);
-    const todo = document.getElementById(todoId);
     if(!wrap) return;
     wrap.innerHTML = "";
-    if(!url){
-      // Show TODO if empty
-      const div = document.createElement("div");
-      div.className = "todo";
-      div.textContent = "Set this tab's URL in the script to show your content.";
-      wrap.appendChild(div);
-      return;
-    }
     const iframe = document.createElement("iframe");
     iframe.loading = "lazy";
     iframe.referrerPolicy = "no-referrer-when-downgrade";
@@ -196,18 +131,17 @@
     wrap.appendChild(iframe);
   }
 
-  // Tabs
-  const tabs = Array.from(document.querySelectorAll(".tab"));
+  const tabs   = Array.from(document.querySelectorAll(".tab"));
   const panels = Array.from(document.querySelectorAll(".panel"));
+
   function selectTab(idx){
     tabs.forEach((t,i)=>t.setAttribute("aria-selected", i===idx ? "true":"false"));
     panels.forEach((p,i)=>p.setAttribute("aria-hidden", i===idx ? "false":"true"));
-    // lazily mount iframe on first open for each panel
-    if(idx===0) mountIframe("wrap-plan","todo-plan",PLAN_URL);
-    if(idx===1) mountIframe("wrap-gtm","todo-gtm",GTM_URL);
-    if(idx===2) mountIframe("wrap-budget","todo-budget",BUDGET_URL);
-    if(idx===3) mountIframe("wrap-enable","todo-enable",ENABLE_URL);
-    if(idx===4) mountIframe("wrap-career","todo-career",CAREER_URL);
+    if(idx===0) mountIframe("wrap-plan",   PLAN_URL);
+    if(idx===1) mountIframe("wrap-gtm",    GTM_URL);
+    if(idx===2) mountIframe("wrap-budget", BUDGET_URL);
+    if(idx===3) mountIframe("wrap-enable", ENABLE_URL);
+    if(idx===4) mountIframe("wrap-career", CAREER_URL);
   }
   tabs.forEach((t,i)=>t.addEventListener("click",()=>selectTab(i)));
   selectTab(0);
