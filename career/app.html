@@ -1,0 +1,154 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Sales Career Path</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{--charcoal:#1f2937;--charcoal-2:#111827;--orange:#f97316;--line:#e5e7eb;--bg:#f6f7f9;--card:#fff}
+  *{box-sizing:border-box} body{margin:0;background:var(--bg);font-family:Inter,system-ui,Segoe UI,Roboto,Helvetica,Arial,sans-serif}
+  header{background:linear-gradient(180deg,var(--charcoal),var(--charcoal-2));color:#fff;padding:16px 20px}
+  header h1{margin:0;font-weight:800}
+  .container{max-width:1200px;margin:18px auto;padding:0 16px}
+  .section{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px 18px;margin:14px 0}
+</style>
+<script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
+<script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
+<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+</head><body>
+<header><div class="container"><h1>Sales Career Path</h1></div></header>
+<div id="root" class="container"></div>
+<script type="text/babel" data-presets="react,typescript">
+const { useState, useMemo } = React;
+
+/* icon shims */
+const TrendingUp = (props) => (React.createElement('span', {style:{marginRight:6}}, '📈'));
+const Award = (props) => (React.createElement('span', {style:{marginRight:6}}, '🏆'));
+const Users = (props) => (React.createElement('span', {style:{marginRight:6}}, '👥'));
+const Target = (props) => (React.createElement('span', {style:{marginRight:6}}, '🎯'));
+const Lightbulb = (props) => (React.createElement('span', {style:{marginRight:6}}, '💡'));
+
+/* === Begin pasted content from sales_career_path.tsx (imports removed) === */
+const CareerPathFramework = () => {
+  const tiers = [
+    {
+      id: 'sdr',
+      title: 'BDR / SDR',
+      level: 'Entry Level',
+      responsibilities: [
+        'Prospect and book meetings with target accounts',
+        'Qualify inbound and outbound opportunities',
+        'Collaborate with AEs on handoff & multi-threading'
+      ],
+      targets: [
+        'Meetings set / month',
+        'Qualified opportunities per quarter',
+        'Account penetration (5 contacts per account)'
+      ],
+      growth: [
+        'Master messaging & sequencing',
+        'Rigorous CRM hygiene and stage definitions',
+        'Shadow AEs on discovery and demos'
+      ],
+      timeline: 'Typical promotion timeline: 9–15 months'
+    },
+    {
+      id: 'ae',
+      title: 'Account Executive (AE)',
+      level: 'Mid Level',
+      responsibilities: [
+        'Full-cycle ownership from discovery to close',
+        'MEDDIC across stages; mutual close plans',
+        'Forecast accuracy and pipeline hygiene'
+      ],
+      targets: [
+        'Annual quota: $1M',
+        'Win rate improvement',
+        'Multi-threading per account'
+      ],
+      growth: [
+        'Advanced discovery; value selling; ROI',
+        'Industry expertise (Fintech/Healthcare patterns)',
+        'Mentor SDRs; drive team plays'
+      ],
+      timeline: 'Promotion to Sr. AE typically 18–24 months'
+    },
+    {
+      id: 'sae',
+      title: 'Senior AE',
+      level: 'Senior IC',
+      responsibilities: [
+        'Own strategic accounts and complex cycles',
+        'Coach AEs & SDRs; raise deal quality',
+        'Partner co-selling, references, POCs'
+      ],
+      targets: [
+        'Attainment consistency',
+        'Strategic wins and expansion',
+        'Referenceable customers'
+      ],
+      growth: [
+        'Deal strategy and executive selling',
+        'Cross-functional leadership',
+        'Prepare for leadership or Staff AE path'
+      ],
+      timeline: 'Path to Leadership or Staff AE: 12–18 months'
+    },
+    {
+      id: 'lead',
+      title: 'Sales Lead / Manager',
+      level: 'Leadership',
+      responsibilities: [
+        'Own segment results and hiring',
+        'Enable team via coaching and inspection',
+        'Run operating cadence and forecast'
+      ],
+      targets: [
+        'Team attainment',
+        'Ramp time & productivity',
+        'Hiring success & retention'
+      ],
+      growth: [
+        'Org design, comp plans, cross-functional influence',
+        'Enablement system & inspection rigor',
+        'Strategic planning and OKR ownership'
+      ],
+      timeline: 'Growth to Director/VP based on scale & results'
+    }
+  ];
+
+  return (
+    <div>
+      <div className="section">
+        <h2 style={{margin:0,display:"flex",alignItems:"center"}}><Users/> Sales Career Framework</h2>
+        <p style={{marginTop:8,color:"#6b7280"}}>Clear levels, outcomes, and growth paths to keep talent advancing and motivated.</p>
+        <div style={{display:"grid",gridTemplateColumns:"repeat(2,minmax(260px,1fr))",gap:12,marginTop:8}}>
+          {tiers.map(t=>(
+            <div key={t.id} className="section" style={{margin:0}}>
+              <div style={{fontWeight:800,fontSize:16,display:"flex",alignItems:"center"}}><Target/> {t.title} <span style={{marginLeft:8,color:"#6b7280",fontSize:12}}>· {t.level}</span></div>
+              <div style={{display:"grid",gridTemplateColumns:"repeat(3,1fr)",gap:10,marginTop:10}}>
+                <div>
+                  <div style={{fontWeight:700,marginBottom:6}}><Lightbulb/> Responsibilities</div>
+                  <ul style={{margin:"0 0 0 18px"}}>{t.responsibilities.map((r,i)=><li key={i} style={{margin:"4px 0"}}>{r}</li>)}</ul>
+                </div>
+                <div>
+                  <div style={{fontWeight:700,marginBottom:6}}><TrendingUp/> Targets</div>
+                  <ul style={{margin:"0 0 0 18px"}}>{t.targets.map((r,i)=><li key={i} style={{margin:"4px 0"}}>{r}</li>)}</ul>
+                </div>
+                <div>
+                  <div style={{fontWeight:700,marginBottom:6}}><Award/> Growth</div>
+                  <ul style={{margin:"0 0 0 18px"}}>{t.growth.map((r,i)=><li key={i} style={{margin:"4px 0"}}>{r}</li>)}</ul>
+                </div>
+              </div>
+              <div style={{marginTop:8,color:"#6b7280",fontSize:12}}>{t.timeline}</div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+};
+/* === End pasted content === */
+
+const root = ReactDOM.createRoot(document.getElementById('root'));
+root.render(React.createElement(CareerPathFramework, null));
+</script>
+</body></html>
