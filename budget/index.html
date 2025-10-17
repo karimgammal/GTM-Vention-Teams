@@ -1,0 +1,22 @@
+<!DOCTYPE html><html lang="en"><head>
+<meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Sales Budget Calculator</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{--charcoal:#1f2937;--charcoal-2:#111827;--orange:#f97316;--line:#e5e7eb;--bg:#f6f7f9;}
+  body{margin:0;background:var(--bg);font-family:Inter,system-ui,Segoe UI,Roboto,Helvetica,Arial,sans-serif}
+  header{background:linear-gradient(180deg,var(--charcoal),var(--charcoal-2));color:#fff;padding:24px 16px}
+  .container{max-width:1100px;margin:auto;padding:0 16px}
+  h1{margin:0;font-size:28px;font-weight:800}
+  .frame{max-width:1100px;margin:18px auto;padding:0 16px}
+  iframe{width:100%;height:80vh;min-height:560px;border:1px solid var(--line);border-radius:12px}
+  .placeholder{display:grid;place-items:center;height:80vh;min-height:560px;border:1px dashed var(--line);border-radius:12px;background:#fff}
+</style></head><body>
+<header><div class="container"><h1>Sales Budget Calculator</h1></div></header>
+<div class="frame" id="wrapper"><div class="placeholder">Set <code>&lt;iframe src="..."></code> to your budget calculator page.</div></div>
+<script>
+  const BUDGET_SRC = "";
+  if(BUDGET_SRC){ document.getElementById('wrapper').innerHTML = `<iframe src="${BUDGET_SRC}" loading="lazy"></iframe>`; }
+</script>
+</body></html>
