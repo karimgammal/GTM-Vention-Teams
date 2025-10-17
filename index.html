@@ -1,158 +1,315 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>GTM Strategy – Vention Teams</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
-  <style>
-    body {
-      font-family: 'Inter', sans-serif;
-      background: #f9fafb;
-      color: #1f2937;
-      line-height: 1.6;
-      margin: 0;
-      padding: 0;
-    }
-    header {
-      background: #1f2937;
-      color: white;
-      padding: 3rem 1rem;
-      text-align: center;
-    }
-    header h1 {
-      font-size: 2.5rem;
-      margin-bottom: 0.5rem;
-    }
-    header p {
-      font-size: 1.125rem;
-      opacity: 0.8;
-    }
-    section {
-      max-width: 960px;
-      margin: 3rem auto;
-      padding: 0 1rem;
-    }
-    h2 {
-      font-size: 1.75rem;
-      margin-bottom: 1rem;
-      color: #111827;
-    }
-    .grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 1.5rem;
-    }
-    .card {
-      background: white;
-      border-radius: 0.75rem;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-      padding: 1.5rem;
-    }
-    iframe {
-      width: 100%;
-      height: 600px;
-      border: 1px solid #e5e7eb;
-      border-radius: 0.75rem;
-    }
-    footer {
-      background: #111827;
-      color: white;
-      padding: 2rem 1rem;
-      text-align: center;
-      margin-top: 4rem;
-    }
-    footer a {
-      color: #60a5fa;
-      text-decoration: underline;
-    }
-    @media(max-width: 768px) {
-      .grid {
-        grid-template-columns: 1fr;
-      }
-      header h1 {
-        font-size: 2rem;
-      }
-    }
-  </style>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>GTM Strategy — Vention Teams</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --brand-900:#0E3E8C; --brand-800:#0A2E69; --ink:#111827; --muted:#4B5563;
+    --bg:#F9FAFB; --card:#FFFFFF; --ring:#E5E7EB; --sky:#60A5FA; --ok:#10B981; --warn:#F59E0B;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:Inter,system-ui,Segoe UI,Roboto,Helvetica,Arial,sans-serif;line-height:1.6}
+  .nav{position:sticky;top:0;z-index:10;backdrop-filter:blur(6px);background:rgba(255,255,255,.85);border-bottom:1px solid #e5e7eb}
+  .nav-inner{max-width:1100px;margin:auto;height:56px;display:flex;align-items:center;justify-content:space-between;padding:0 20px}
+  .hero{background:linear-gradient(180deg,var(--brand-900),var(--brand-800));color:#fff}
+  .container{max-width:1100px;margin:auto;padding:0 20px}
+  .hero-inner{padding:42px 0;display:grid;gap:24px;grid-template-columns:1.2fr .8fr}
+  .pill{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.25);border-radius:18px;padding:10px 14px;display:inline-flex;gap:8px}
+  .metric{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.25);border-radius:14px;padding:14px}
+  h1{font-size:42px;line-height:1.1;margin:0 0 10px;font-weight:800}
+  h2{font-size:28px;margin:0 0 12px}
+  h3{font-size:20px;margin:0 0 8px}
+  section{margin:36px 0}
+  .grid2{display:grid;gap:16px;grid-template-columns:1fr 1fr}
+  .cards{display:grid;gap:16px;grid-template-columns:1fr 1fr}
+  .card{background:var(--card);border:1px solid var(--ring);border-radius:14px;padding:18px}
+  .muted{color:var(--muted)}
+  .btn{display:inline-flex;align-items:center;gap:8px;padding:10px 14px;border-radius:12px;border:1px solid rgba(255,255,255,.35);color:#fff;text-decoration:none}
+  .btn.alt{background:#fff;border-color:#fff;color:#111827;font-weight:600}
+  .table{width:100%;border-collapse:collapse}
+  .table th,.table td{border-bottom:1px solid var(--ring);padding:8px 10px;text-align:right;font-variant-numeric:tabular-nums}
+  .table th:first-child,.table td:first-child{text-align:left}
+  .kpis{display:grid;gap:16px;grid-template-columns:1fr 1fr}
+  footer{background:#0f172a;color:#fff;margin-top:48px}
+  footer .container{padding:18px 20px}
+  /* form */
+  .row{display:grid;gap:14px;grid-template-columns:repeat(3,1fr)}
+  .row4{display:grid;gap:14px;grid-template-columns:repeat(4,1fr)}
+  label{font-size:12px;font-weight:600;color:#374151;display:block;margin-bottom:6px}
+  input,select{width:100%;padding:10px 12px;border-radius:10px;border:1px solid var(--ring);background:#fff}
+  .note{font-size:12px;color:#6B7280;margin-top:4px}
+  @media (max-width: 900px){
+    .hero-inner{grid-template-columns:1fr;gap:10px}
+    .grid2,.cards,.row,.row4,.kpis{grid-template-columns:1fr}
+    h1{font-size:34px}
+  }
+</style>
 </head>
 <body>
 
-<header>
-  <h1>GTM Strategy – Vention Teams</h1>
-  <p>Fintech & Healthcare · $200K Avg Deal Size · AE Full-Cycle · Ramp + Sales Cycle</p>
+<!-- Top nav -->
+<div class="nav">
+  <div class="nav-inner">
+    <div style="display:flex;align-items:center;gap:10px">
+      <div style="width:28px;height:28px;border-radius:8px;background:linear-gradient(135deg,#2AA0FF,#76C5FF)"></div>
+      <strong>Vention Teams — GTM Plan</strong>
+    </div>
+    <div style="display:flex;gap:16px;font-size:14px">
+      <a href="#summary" style="color:#111827;text-decoration:none">Summary</a>
+      <a href="#story" style="color:#111827;text-decoration:none">Story</a>
+      <a href="#plan" style="color:#111827;text-decoration:none">30-60-90-180</a>
+      <a href="#calc" style="color:#111827;text-decoration:none">Calculator</a>
+      <a href="#why" style="color:#111827;text-decoration:none">Why it Works</a>
+    </div>
+  </div>
+</div>
+
+<!-- Hero -->
+<header class="hero">
+  <div class="container hero-inner">
+    <div>
+      <div class="pill">Fintech • Healthcare · AE full-cycle · $200K avg deal · Ramp + Sales cycle</div>
+      <h1>GTM Strategy to Scale Revenue Predictably</h1>
+      <p class="muted" style="color:rgba(255,255,255,.85)">
+        A focused plan to grow pipeline, accelerate revenue, and build a repeatable engine aligned to Vention Teams’ delivery strengths.
+      </p>
+      <div style="display:flex;gap:10px;margin-top:14px">
+        <a class="btn alt" href="#summary">Read the Summary</a>
+        <a class="btn" href="#calc">Open the Calculator</a>
+      </div>
+    </div>
+    <div class="cards">
+      <div class="metric"><div class="muted" style="color:#c7d2fe">Target / AE</div><div style="font-size:22px;font-weight:800">$1M</div></div>
+      <div class="metric"><div class="muted" style="color:#c7d2fe">Sales Cycle</div><div style="font-size:22px;font-weight:800">4–5 mo</div></div>
+      <div class="metric"><div class="muted" style="color:#c7d2fe">Avg Deal</div><div style="font-size:22px;font-weight:800">$200K</div></div>
+      <div class="metric"><div class="muted" style="color:#c7d2fe">Coverage</div><div style="font-size:22px;font-weight:800">5 contacts / acct</div></div>
+    </div>
+  </div>
 </header>
 
-<section>
-  <h2>Executive Summary</h2>
-  <p>
-    This GTM strategy outlines how we will scale Vention Teams' Fintech & Healthcare revenue engine
-    through focused hiring, ramping, enablement, and outbound-led acquisition. 
-    By structuring the team for scale, aligning quotas to realistic ramp cycles, and
-    layering incentives with clear leading & lagging indicators, we will build a predictable pipeline
-    and derisk revenue delivery early.
-  </p>
-</section>
-
-<section>
-  <h2>Team Size, Quota & Hiring Strategy</h2>
-  <div class="grid">
-    <div class="card">
-      <h3>🏗 Team Structure</h3>
-      <p>We’ll inherit 4 AEs and layer strategic hires across two waves in Year 1 to support vertical focus (Fintech & Healthcare).</p>
+<main class="container">
+  <!-- Executive Summary -->
+  <section id="summary">
+    <h2>Executive Summary</h2>
+    <div class="grid2">
+      <div class="card">
+        <h3>🎯 Goals</h3>
+        <ul>
+          <li>$1M quota per AE; fix BDR under-performance via coaching + channel focus</li>
+          <li>Verticalized plays for Fintech & Healthcare; ABM + field events</li>
+          <li>Realistic ramp and lag modeled for forecast credibility</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>⚙️ Levers</h3>
+        <ul>
+          <li>Accounts-first coverage (5 contacts/account), exec multi-threading</li>
+          <li>Comp accelerators at 100%+, quarterly performance bonuses</li>
+          <li>Community-led sales (panels/dinners) to compress cycle & raise ACV</li>
+        </ul>
+      </div>
     </div>
-    <div class="card">
-      <h3>🎯 Quota & Ramp</h3>
-      <p>$1M annual quota per AE. 1-month ramp + 4-month sales cycle, with revenue recognition starting effectively in month 5 of tenure.</p>
+  </section>
+
+  <!-- Story -->
+  <section id="story">
+    <h2>Team Size → Quota & Hiring → Comp → Enablement → Channels</h2>
+    <div class="cards">
+      <div class="card">
+        <h3>Team Size, Quota & Hiring</h3>
+        <p>Inherit 4 AEs; hire in cohorts with 1-month ramp. Revenue recognition lags by the sales cycle.</p>
+      </div>
+      <div class="card">
+        <h3>Comp & Incentives</h3>
+        <p>Transparent OTE, tiered commissions at 80/100/120%+, and accelerators rewarding multi-threaded wins and forecast accuracy.</p>
+      </div>
+      <div class="card">
+        <h3>Team Enablement</h3>
+        <p>ICPs, messaging playbooks, objection handling, deal reviews, and a technical POC lane for complex evaluations.</p>
+      </div>
+      <div class="card">
+        <h3>Acquisition Channels</h3>
+        <p>Outbound ABM + field events, partner intros, and retargeting to lift reply→meeting conversions with credibility content.</p>
+      </div>
     </div>
-  </div>
-</section>
+  </section>
 
-<section>
-  <h2>Comp Plan & Incentives</h2>
-  <p>
-    Clear accelerators tied to both **leading metrics** (pipeline creation, qualified opps) and **lagging metrics** (revenue, retention),
-    ensuring reps are rewarded for controllable inputs and sustainable growth.
-  </p>
-</section>
-
-<section>
-  <h2>Team Enablement & Acquisition Strategy</h2>
-  <div class="grid">
-    <div class="card">
-      <h3>📚 Enablement</h3>
-      <p>Codified ramp plans, verticalized talk tracks, MEDDIC qualification, and outbound frameworks to ramp reps fast and improve win rates.</p>
+  <!-- 30-60-90-180 -->
+  <section id="plan">
+    <h2>30-60-90-180 Execution</h2>
+    <div class="cards">
+      <div class="card">
+        <h3>0–30 (Foundation)</h3>
+        <ul><li>Confirm model & forecast rhythm</li><li>Finalize ICPs & plays</li><li>BDR coaching to quality</li><li>Spin up panels/dinners calendar</li></ul>
+      </div>
+      <div class="card">
+        <h3>31–60 (Execute)</h3>
+        <ul><li>Hire cohort 1; 1-month ramp</li><li>ABM live; field events start</li><li>Deal reviews & pattern library</li><li>Finalize accelerators</li></ul>
+      </div>
+      <div class="card">
+        <h3>61–90 (Optimize)</h3>
+        <ul><li>Cohort 1 closing; cohort 2 decision</li><li>Expand partner/channel experiments</li><li>Publish 2–3 case studies</li><li>Tighten stage exits & forecast</li></ul>
+      </div>
+      <div class="card">
+        <h3>91–180 (Scale)</h3>
+        <ul><li>Repeatable motion: 3–4× coverage</li><li>Lift ACV via exec alignment</li><li>Operationalize panels/dinners</li><li>Hire throttle tied to signals</li></ul>
+      </div>
     </div>
-    <div class="card">
-      <h3>🚀 Acquisition Channels</h3>
-      <p>Hybrid outbound strategy focusing on Fintech & Healthcare accounts with multi-touch sequences and targeted content.</p>
+  </section>
+
+  <!-- Calculator: zero-build, inline JS -->
+  <section id="calc">
+    <h2>GTM Calculator (Headcount ↔ Revenue)</h2>
+    <div class="card" style="border-color:#dbeafe">
+      <div class="row4">
+        <div><label>Horizon (months)</label><input id="horizon" type="number" min="6" max="36" value="12"></div>
+        <div><label>Starting AEs (inherited)</label><input id="startAEs" type="number" min="0" value="4"></div>
+        <div><label>Quota / AE (annual, $)</label><input id="quota" type="number" min="0" value="1000000"></div>
+        <div><label>Inherited Attainment (%)</label><input id="inhPct" type="number" min="0" max="150" value="50"></div>
+      </div>
+      <div class="row4" style="margin-top:12px">
+        <div><label>New Hires in M1</label><input id="m1Hires" type="number" min="0" value="2"></div>
+        <div><label>Quota Attainment (%)</label><input id="attain" type="number" min="0" max="150" value="85"></div>
+        <div><label>Sales Cycle (months)</label><input id="cycle" type="number" min="1" max="12" value="4"></div>
+        <div><label>Ramp (months)</label>
+          <select id="ramp">
+            <option value="1" selected>1 (50% then 100%)</option>
+            <option value="2">2 (50% → 75% → 100%)</option>
+            <option value="3">3 (33% → 66% → 100%)</option>
+          </select>
+        </div>
+      </div>
+      <div class="note">Recognized revenue starts after <strong>Ramp + Sales Cycle</strong> months since hire.</div>
+
+      <div style="margin-top:12px;display:flex;gap:8px">
+        <button id="run" style="padding:10px 14px;border-radius:10px;background:var(--brand-900);color:#fff;border:none">Recalculate</button>
+        <div id="msg" class="note"></div>
+      </div>
+
+      <div id="summary" style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:14px">
+        <div class="card"><div class="muted">Final AE Count</div><div id="s_final" style="font-weight:800;font-size:20px">—</div></div>
+        <div class="card"><div class="muted">Revenue – Inherited</div><div id="s_inh" style="font-weight:800;font-size:20px">—</div></div>
+        <div class="card"><div class="muted">Revenue – New Hires</div><div id="s_new" style="font-weight:800;font-size:20px">—</div></div>
+        <div class="card"><div class="muted">Revenue – Total</div><div id="s_tot" style="font-weight:800;font-size:20px">—</div></div>
+      </div>
+
+      <div style="overflow:auto;margin-top:12px">
+        <table class="table" id="tbl">
+          <thead><tr id="months"><th>Month</th></tr></thead>
+          <tbody>
+            <tr id="aeRow"><td>AEs (end of month)</td></tr>
+            <tr id="inhRow"><td>Revenue – Inherited</td></tr>
+            <tr id="newRow"><td>Revenue – New Hires</td></tr>
+            <tr id="totRow"><td><strong>Revenue – Total</strong></td></tr>
+          </tbody>
+        </table>
+      </div>
     </div>
-  </div>
-</section>
+  </section>
 
-<section>
-  <h2>GTM Calculator</h2>
-  <p>
-    Explore the dynamic GTM calculator to model different hiring and revenue scenarios over 12–24 months.
-  </p>
-  <!-- Replace this URL with the actual GitHub Pages URL where your calculator lives -->
-  <iframe src="https://karigmamml.github.io/GTM-Vention-Teams-calculator/"></iframe>
-</section>
-
-<section>
-  <h2>Why This Strategy Will Work</h2>
-  <p>
-    ✅ Early leading indicators: volume & quality of pipeline per AE, outbound activity velocity, qualification rates.<br>
-    ✅ Lagging indicators: ramped revenue per AE, win rates, quota attainment by month 6+.<br><br>
-    This structure gives the CEO and leadership early visibility into execution risk while scaling predictably.
-  </p>
-</section>
+  <!-- Why it works -->
+  <section id="why">
+    <h2>Why This Strategy Works</h2>
+    <div class="kpis">
+      <div class="card">
+        <h3>Leading Indicators</h3>
+        <ul>
+          <li>Account penetration (5 contacts/account)</li>
+          <li>Reply→meeting conversion by channel</li>
+          <li>Pipeline velocity by stage; POC cycle time</li>
+          <li>Field-event sourced SQLs and ACV lift</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>Lagging Signals & De-risking</h3>
+        <ul>
+          <li>Win-rate by persona/vertical; raise the bar where low</li>
+          <li>Forecast accuracy & slipped deals → coaching</li>
+          <li>Attainment pacing vs. headcount gate (hire throttle)</li>
+          <li>COGS/margin guardrails vs. delivery capacity</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+</main>
 
 <footer>
-  <p>Built by Karim El Gammal · <a href="https://ventionteams.com" target="_blank">Vention Teams</a></p>
+  <div class="container">Built for Vention Teams • Fintech & Healthcare • © 2025</div>
 </footer>
 
+<script>
+  const $ = (id)=>document.getElementById(id);
+  const fmtMoney = n => (Math.round(n)).toLocaleString(undefined,{style:'currency',currency:'USD',maximumFractionDigits:0});
+
+  function rampFactor(idx, rampMonths){
+    if(rampMonths===1) return idx===1?0.5:1;
+    if(rampMonths===2) return idx===1?0.5:(idx===2?0.75:1);
+    return idx===1?0.33:(idx===2?0.66:1);
+  }
+
+  function run(){
+    const H = Math.max(6, Math.min(36, Number($('horizon').value)||12));
+    const startAEs = Math.max(0, Number($('startAEs').value)||0);
+    const quota = Math.max(0, Number($('quota').value)||0);
+    const inhPct = Math.max(0, Math.min(150, Number($('inhPct').value)||0))/100;
+    const m1Hires = Math.max(0, Number($('m1Hires').value)||0);
+    const attain = Math.max(0, Math.min(150, Number($('attain').value)||0))/100;
+    const cycle = Math.max(1, Math.min(12, Number($('cycle').value)||4));
+    const ramp = Number($('ramp').value)||1;
+
+    const months = Array.from({length:H},(_,i)=>`M${i+1}`);
+    // headers
+    const mh = $('months'); mh.innerHTML='<th>Month</th>'+months.map(m=>`<th>${m}</th>`).join('');
+    const aeRow = $('aeRow'), inhRow=$('inhRow'), newRow=$('newRow'), totRow=$('totRow');
+    aeRow.innerHTML='<td>AEs (end of month)</td>';
+    inhRow.innerHTML='<td>Revenue – Inherited</td>';
+    newRow.innerHTML='<td>Revenue – New Hires</td>';
+    totRow.innerHTML='<td><strong>Revenue – Total</strong></td>';
+
+    const monthlyQuota = quota/12;
+    const AEs = new Array(H).fill(0);
+    const inhRev = new Array(H).fill(0);
+    const newRev = new Array(H).fill(0);
+
+    // AEs count over time (only M1 hires in this lightweight version)
+    for(let m=0;m<H;m++){
+      AEs[m] = startAEs + (m>=0?m1Hires:0);
+      inhRev[m] = startAEs * monthlyQuota * inhPct;
+    }
+
+    // New hires recognition: starts after ramp + sales cycle months from hire
+    const startOffset = ramp + cycle; // months since hire when recognition begins
+    const monthsRecognized = Math.max(1, 12 - startOffset); // spread remaining first-year months equally
+    const perAEPerMonth = (quota * attain) / monthsRecognized;
+
+    const startIdx = startOffset-1; // since hires are at M1 timeline index 0
+    for(let m=startIdx; m<Math.min(11,H-1)+1; m++){ // up to first 12 months
+      if(m>=0 && m<H) newRev[m] += m1Hires * perAEPerMonth;
+    }
+
+    const totRev = new Array(H).fill(0);
+    for(let m=0;m<H;m++){
+      totRev[m] = inhRev[m] + newRev[m];
+      aeRow.innerHTML += `<td>${AEs[m]}</td>`;
+      inhRow.innerHTML += `<td>${fmtMoney(inhRev[m])}</td>`;
+      newRow.innerHTML += `<td>${fmtMoney(newRev[m])}</td>`;
+      totRow.innerHTML += `<td><strong>${fmtMoney(totRev[m])}</strong></td>`;
+    }
+
+    $('s_final').textContent = AEs[H-1];
+    $('s_inh').textContent = fmtMoney(inhRev.reduce((a,b)=>a+b,0));
+    $('s_new').textContent = fmtMoney(newRev.reduce((a,b)=>a+b,0));
+    $('s_tot').textContent = fmtMoney(totRev.reduce((a,b)=>a+b,0));
+    $('msg').textContent = `Recognition begins Month ${startOffset} of tenure (ramp ${ramp} + cycle ${cycle}).`;
+  }
+
+  $('run').addEventListener('click', run);
+  run();
+</script>
 </body>
 </html>
